@@ -7,12 +7,17 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@config': path.resolve(__dirname, './src/config'),
-      '@context': path.resolve(__dirname, './src/context')
+      '@app': path.resolve(__dirname, './src/app'),
+      '@features': path.resolve(__dirname, './src/features'),
+      '@common': path.resolve(__dirname, './src/common'),
+      '@core': path.resolve(__dirname, './src/core'),
+      // Legacy aliases pointing to new locations
+      '@components': path.resolve(__dirname, './src/common'),
+      '@services': path.resolve(__dirname, './src/core/services'),
+      '@hooks': path.resolve(__dirname, './src/core/hooks'),
+      '@config': path.resolve(__dirname, './src/core/config'),
+      '@context': path.resolve(__dirname, './src/core/context'),
+      '@utils': path.resolve(__dirname, './src/core/utils'),
     }
   },
   server: {
