@@ -42,7 +42,7 @@ const fetchCardanoPools = async () => {
     const data = await safeFetch(KOIOS_POOL_LIST)
     if (!Array.isArray(data)) return null
     // Only count active (non-retiring) pools
-    const active = data.filter(p => p.retiring_epoch == null)
+    const active = data.filter(p => p.retiring_epoch === null || p.retiring_epoch === undefined)
     return active.length
 }
 
@@ -87,14 +87,14 @@ export const fetchChainStats = async () => {
 }
 
 export const formatTVL = (tvl) => {
-    if (tvl == null) return null
+    if (tvl === null || tvl === undefined) return null
     if (tvl >= 1e9) return `$${(tvl / 1e9).toFixed(1)}B`
     if (tvl >= 1e6) return `$${(tvl / 1e6).toFixed(1)}M`
     return `$${tvl.toLocaleString()}`
 }
 
 export const formatCount = (n) => {
-    if (n == null) return null
+    if (n === null || n === undefined) return null
     if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`
     if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`
     return n.toLocaleString()
