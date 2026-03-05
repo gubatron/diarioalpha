@@ -42,7 +42,7 @@ const fetchCardanoPools = async () => {
     const data = await safeFetch(KOIOS_POOL_LIST)
     if (!Array.isArray(data)) return null
     // Only count active (non-retiring) pools
-    const active = data.filter(p => p.retiring_epoch === null || p.retiring_epoch === undefined)
+    const active = data.filter(p => p.retiring_epoch == null)
     return active.length
 }
 

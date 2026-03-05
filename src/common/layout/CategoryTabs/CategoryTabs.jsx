@@ -1,4 +1,4 @@
-import { CATEGORIES } from '@config/panels'
+import { CATEGORIES } from '@core/config/panels'
 import './CategoryTabs.css'
 
 const CategoryTabs = ({ activeCategory, onCategoryChange }) => {
