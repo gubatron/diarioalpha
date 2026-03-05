@@ -50,9 +50,9 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
     padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--panel-item-bg);
     border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
 }
 
 .metric {
@@ -86,7 +86,7 @@
 .repo-tag {
     font-size: 0.55rem;
     color: var(--text-dim);
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--panel-item-bg);
     padding: 0.15rem 0.4rem;
     border-radius: 3px;
     font-family: var(--font-mono);
@@ -151,13 +151,13 @@
 }
 
 .graph-cell {
-    stroke: rgba(255, 255, 255, 0.04);
+    stroke: var(--glass-border);
     stroke-width: 0.5;
     transition: stroke 0.15s;
 }
 
 .graph-cell:hover {
-    stroke: rgba(255, 255, 255, 0.3);
+    stroke: var(--glass-border-hover);
     stroke-width: 1;
 }
 
@@ -187,7 +187,7 @@
 
 /* Graph empty cell color */
 :root {
-    --graph-empty: rgba(255, 255, 255, 0.04);
+    --graph-empty: var(--panel-item-bg);
 }
 
 /* Responsive */

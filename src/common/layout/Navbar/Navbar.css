@@ -1,8 +1,8 @@
 .navbar {
-  background: rgba(10, 10, 10, 0.95);
+  background: var(--nav-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--glass-border);
   padding: 0.75rem 1.5rem;
   display: flex;
   justify-content: space-between;
@@ -10,7 +10,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   
   /* Entrance animation */
   animation: navbarSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -36,7 +36,7 @@
 .title {
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   color: var(--text-primary);
   font-family: var(--font-display);
 }
@@ -101,7 +101,7 @@
   align-items: center;
   gap: 0.75rem;
   padding-left: 1rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid var(--glass-border);
 }
 
 .time-date {
@@ -126,23 +126,23 @@
 
 .nav-link {
   padding: 0.45rem 0.9rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--panel-item-bg);
   color: var(--text-secondary);
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   transition: all 0.2s ease;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--panel-item-hover);
   color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--glass-border-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .nav-link.active {
@@ -158,23 +158,23 @@
 
 .navbar button {
   padding: 0.45rem 0.9rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--panel-item-bg);
   color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   transition: all 0.2s ease;
 }
 
 .navbar button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--panel-item-hover);
   color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--glass-border-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .navbar button:active:not(:disabled) {

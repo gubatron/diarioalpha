@@ -7,9 +7,9 @@ export const ThemeProvider = ({ children }) => {
     const [currentTheme, setCurrentTheme] = useState(() => {
         try {
             const saved = localStorage.getItem('alpha_monitor_theme')
-            return (saved && THEMES[saved]) ? saved : 'default'
+            return (saved && THEMES[saved]) ? saved : 'githubDark'
         } catch {
-            return 'default'
+            return 'githubDark'
         }
     })
 
