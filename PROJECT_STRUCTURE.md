@@ -10,140 +10,185 @@ world_monitor/
 ├── public/
 │   └── dashboard.png              # Dashboard preview image
 ├── src/
-│   ├── components/                # React components
-│   │   ├── CategoryTabs/          # Category filter tabs
-│   │   │   ├── CategoryTabs.css
-│   │   │   └── CategoryTabs.jsx
-│   │   ├── CommandModal/          # Command palette modal
-│   │   │   ├── CommandModal.css
-│   │   │   └── CommandModal.jsx
-│   │   ├── Dashboard/             # Main dashboard view
-│   │   │   ├── Dashboard.css
-│   │   │   └── Dashboard.jsx
-│   │   ├── DeveloperActivity/     # Chain developer activity graphs
-│   │   │   ├── DeveloperActivity.css
-│   │   │   └── DeveloperActivity.jsx
-│   │   ├── ErrorBoundary/         # Error boundary wrapper
-│   │   │   ├── ErrorBoundary.css
-│   │   │   └── ErrorBoundary.jsx
-│   │   ├── GlobalMap/             # Interactive world map
-│   │   │   ├── GlobalMap.css
-│   │   │   ├── GlobalMap.jsx
-│   │   │   └── HotspotModal/      # Map hotspot details
-│   │   │       ├── HotspotModal.css
-│   │   │       └── HotspotModal.jsx
-│   │   ├── Navbar/                # Top navigation bar
-│   │   │   ├── Navbar.css
-│   │   │   └── Navbar.jsx
-│   │   ├── NewsWireFeed/          # Reusable news wire component
-│   │   │   ├── NewsWireFeed.css
-│   │   │   └── NewsWireFeed.jsx
-│   │   ├── panels/                # Individual panel components
-│   │   │   ├── AIRacePanel/       # AI development tracking
-│   │   │   │   ├── AIRacePanel.css
-│   │   │   │   └── AIRacePanel.jsx
-│   │   │   ├── BlockchainPanel/   # Blockchain/crypto news
+│   ├── app/                       # Application shell
+│   │   ├── App.css                # App-level styles
+│   │   ├── App.jsx                # Root component (router + layout)
+│   │   ├── index.js               # Barrel exports
+│   │   └── rootProviders.jsx      # Composed context providers
+│   ├── features/                  # Feature-based modules
+│   │   ├── ai-race/               # AI development tracking
+│   │   │   ├── components/
+│   │   │   │   ├── AiRacePanel.css
+│   │   │   │   └── AiRacePanel.jsx
+│   │   │   ├── service/
+│   │   │   │   └── aiRaceFeedService.js
+│   │   │   └── index.js
+│   │   ├── blockchain/            # Blockchain/crypto news & stats
+│   │   │   ├── components/
 │   │   │   │   ├── BlockchainPanel.css
 │   │   │   │   └── BlockchainPanel.jsx
-│   │   │   ├── GoodNewsPanel/     # Positive news feed
+│   │   │   ├── service/
+│   │   │   │   └── blockchainFeedService.js
+│   │   │   └── index.js
+│   │   ├── dashboard/             # Main dashboard view
+│   │   │   ├── components/
+│   │   │   │   ├── Dashboard.css
+│   │   │   │   └── Dashboard.jsx
+│   │   │   └── index.js
+│   │   ├── good-news/             # Positive news feed
+│   │   │   ├── components/
 │   │   │   │   ├── GoodNewsPanel.css
 │   │   │   │   └── GoodNewsPanel.jsx
-│   │   │   ├── HeatmapPanel/      # Sector performance heatmap
+│   │   │   ├── service/
+│   │   │   │   └── goodNewsFeedService.js
+│   │   │   └── index.js
+│   │   ├── heatmap/               # Sector performance heatmap
+│   │   │   ├── components/
 │   │   │   │   ├── HeatmapPanel.css
 │   │   │   │   └── HeatmapPanel.jsx
-│   │   │   ├── LayoffsPanel/      # Tech layoffs tracker
+│   │   │   └── index.js
+│   │   ├── layoffs/               # Tech layoffs tracker
+│   │   │   ├── components/
 │   │   │   │   ├── LayoffsPanel.css
 │   │   │   │   └── LayoffsPanel.jsx
-│   │   │   ├── MarketsPanel/      # Markets overview
+│   │   │   ├── service/
+│   │   │   │   └── layoffsFeedService.js
+│   │   │   └── index.js
+│   │   ├── markets/               # Markets overview & ticker
+│   │   │   ├── components/
 │   │   │   │   ├── MarketsPanel.css
 │   │   │   │   └── MarketsPanel.jsx
-│   │   │   ├── NewsPanel/         # General news feed
+│   │   │   ├── TickerStrip/
+│   │   │   │   ├── TickerStrip.css
+│   │   │   │   └── TickerStrip.jsx
+│   │   │   └── index.js
+│   │   ├── news/                  # General news feeds
+│   │   │   ├── components/
 │   │   │   │   ├── NewsPanel.css
 │   │   │   │   └── NewsPanel.jsx
-│   │   │   ├── Panel/             # Generic panel wrapper
-│   │   │   │   ├── Panel.css
-│   │   │   │   └── Panel.jsx
-│   │   │   ├── StartupsPanel/     # Startup funding tracker
+│   │   │   ├── service/
+│   │   │   │   └── newsFeedService.js
+│   │   │   └── index.js
+│   │   ├── startups/              # Startup funding tracker
+│   │   │   ├── components/
 │   │   │   │   ├── StartupsPanel.css
 │   │   │   │   └── StartupsPanel.jsx
-│   │   │   ├── VCPanel/           # VC activity tracker
+│   │   │   ├── service/
+│   │   │   │   └── startupsFeedService.js
+│   │   │   └── index.js
+│   │   ├── vc-activity/           # VC activity tracker
+│   │   │   ├── components/
 │   │   │   │   ├── VCPanel.css
 │   │   │   │   └── VCPanel.jsx
-│   │   │   └── WarWatchPanel/     # Conflict/war monitoring
-│   │   │       ├── WarWatchPanel.css
-│   │   │       └── WarWatchPanel.jsx
-│   │   ├── SettingsModal/         # User settings modal
-│   │   │   ├── SettingsModal.css
-│   │   │   └── SettingsModal.jsx
-│   │   └── TickerStrip/           # Market ticker strip
-│   │       ├── TickerStrip.css
-│   │       └── TickerStrip.jsx
-│   ├── config/                    # Configuration files
-│   │   ├── panels.js              # Panel definitions & categories
-│   │   ├── regions.js             # Geographic region config
-│   │   └── themes.js              # Theme/color configurations
-│   ├── context/                   # React context providers
-│   │   ├── RefreshContext.jsx     # Refresh state management
-│   │   └── ThemeContext.jsx       # Theme state management
-│   ├── hooks/                     # Custom React hooks
-│   │   ├── index.js               # Hook exports
-│   │   ├── useDynamicRegions.js   # Dynamic region handling
-│   │   ├── useFeedData.js         # Feed data fetching
-│   │   ├── useLocalStorage.js     # LocalStorage utilities
-│   │   └── usePanelSettings.js    # Panel configuration
-│   ├── services/                  # API & data services
-│   │   ├── feeds/                 # Feed services
-│   │   │   ├── aiRaceFeedService.js
-│   │   │   ├── baseFeedService.js
-│   │   │   ├── blockchainFeedService.js
-│   │   │   ├── feedConfig.js      # Feed configuration
-│   │   │   ├── goodNewsFeedService.js
-│   │   │   ├── index.js           # Service exports
-│   │   │   ├── layoffsFeedService.js
-│   │   │   ├── mapFeedService.js
-│   │   │   ├── newsFeedService.js
-│   │   │   ├── startupsFeedService.js
-│   │   │   ├── vcFeedService.js
-│   │   │   └── warWatchFeedService.js
-│   │   ├── chainStats.js          # Blockchain statistics
-│   │   └── index.js               # Service exports
-│   ├── utils/                     # Utility functions
-│   │   ├── dateHelpers.js         # Date formatting utilities
-│   │   ├── fetchUtils.js          # HTTP fetch utilities
-│   │   ├── helpers.js             # General helpers
-│   │   └── index.js               # Utility exports
-│   ├── App.css                    # App-level styles
-│   ├── App.jsx                    # Main App component
+│   │   │   ├── service/
+│   │   │   │   └── vcFeedService.js
+│   │   │   └── index.js
+│   │   └── war-watch/             # Conflict/war monitoring
+│   │       ├── components/
+│   │       │   ├── WarWatchPanel.css
+│   │       │   └── WarWatchPanel.jsx
+│   │       ├── service/
+│   │       │   └── warWatchFeedService.js
+│   │       └── index.js
+│   ├── common/                    # Shared UI primitives & layout
+│   │   ├── feedback/
+│   │   │   └── ErrorBoundary/     # Error boundary wrapper
+│   │   │       ├── ErrorBoundary.css
+│   │   │       └── ErrorBoundary.jsx
+│   │   ├── layout/
+│   │   │   ├── CategoryTabs/      # Category filter tabs
+│   │   │   │   ├── CategoryTabs.css
+│   │   │   │   └── CategoryTabs.jsx
+│   │   │   ├── CommandModal/      # Command palette modal
+│   │   │   │   ├── CommandModal.css
+│   │   │   │   └── CommandModal.jsx
+│   │   │   ├── Navbar/            # Top navigation bar
+│   │   │   │   ├── Navbar.css
+│   │   │   │   └── Navbar.jsx
+│   │   │   └── SettingsModal/     # User settings modal
+│   │   │       ├── SettingsModal.css
+│   │   │       └── SettingsModal.jsx
+│   │   ├── ui/
+│   │   │   ├── NewsWireFeed/      # Reusable news wire component
+│   │   │   │   ├── NewsWireFeed.css
+│   │   │   │   └── NewsWireFeed.jsx
+│   │   │   └── Panel/             # Generic panel wrapper
+│   │   │       ├── Panel.css
+│   │   │       └── Panel.jsx
+│   │   └── visualization/
+│   │       ├── DeveloperActivity/ # Chain developer activity graphs
+│   │       │   ├── DeveloperActivity.css
+│   │       │   └── DeveloperActivity.jsx
+│   │       └── GlobalMap/         # Interactive world map
+│   │           ├── GlobalMap.css
+│   │           ├── GlobalMap.jsx
+│   │           └── HotspotModal/  # Map hotspot details
+│   │               ├── HotspotModal.css
+│   │               └── HotspotModal.jsx
+│   ├── core/                      # Cross-cutting concerns
+│   │   ├── config/
+│   │   │   ├── panels.js          # Panel definitions & categories
+│   │   │   ├── regions.js         # Geographic region config
+│   │   │   └── themes.js          # Theme/color configurations
+│   │   ├── context/
+│   │   │   ├── RefreshContext.jsx # Refresh state management
+│   │   │   └── ThemeContext.jsx   # Theme state management
+│   │   ├── hooks/
+│   │   │   ├── index.js           # Hook exports
+│   │   │   ├── useDynamicRegions.js
+│   │   │   ├── useFeedData.js     # Feed data polling hook
+│   │   │   ├── useLocalStorage.js
+│   │   │   └── usePanelSettings.js
+│   │   ├── services/
+│   │   │   ├── base/
+│   │   │   │   ├── baseFeedService.js  # Base RSS feed service
+│   │   │   │   └── feedConfig.js       # Feed URL configuration
+│   │   │   ├── map/
+│   │   │   │   └── mapFeedService.js   # Map-specific feed service
+│   │   │   ├── chainStats.js      # Blockchain statistics (DefiLlama, beaconcha.in)
+│   │   │   ├── githubActivity.js  # GitHub commit activity
+│   │   │   └── index.js           # Service barrel exports
+│   │   └── utils/
+│   │       ├── dateHelpers.js     # Date formatting utilities
+│   │       ├── fetchUtils.js      # HTTP fetch + RSS parse utilities
+│   │       ├── helpers.js         # General helpers
+│   │       └── index.js           # Utility exports
 │   ├── index.css                  # Global styles
 │   └── main.jsx                   # Application entry point
-├── .gitignore                     # Git ignore rules
+├── .gitignore
 ├── index.html                     # HTML entry point
-├── package.json                   # Dependencies & scripts
-├── package-lock.json              # Locked dependencies
-├── README.md                      # Project documentation
-├── vite.config.js                 # Vite build configuration
+├── package.json
+├── package-lock.json
+├── README.md
+├── vite.config.js                 # Vite build configuration with path aliases
 └── PROJECT_STRUCTURE.md           # This file
 ```
 
-## Key Components
+## Path Aliases (vite.config.js)
 
-### Panels
-- **World / Geopolitical** - Global news and events
-- **Technology / AI** - Tech and AI industry news
-- **Financial** - Financial markets news
-- **Startups** - Startup funding rounds and news
-- **VC Activity** - Venture capital fund activity
-- **Blockchain / Crypto** - Cryptocurrency and blockchain news
-- **War Watch** - Conflict monitoring
-- **Layoffs Tracker** - Tech industry layoffs
+| Alias | Resolves to |
+|---|---|
+| `@` | `src/` |
+| `@app` | `src/app/` |
+| `@features` | `src/features/` |
+| `@common` | `src/common/` |
+| `@core` | `src/core/` |
+| `@components` *(legacy)* | `src/common/` |
+| `@services` *(legacy)* | `src/core/services/` |
+| `@hooks` *(legacy)* | `src/core/hooks/` |
+| `@config` *(legacy)* | `src/core/config/` |
+| `@context` *(legacy)* | `src/core/context/` |
+| `@utils` *(legacy)* | `src/core/utils/` |
 
-### Features
+## Key Features
+
 - Draggable and reorderable panels
 - Category-based filtering
 - Command palette for quick actions
 - Real-time data refresh
 - Dark theme with customizable colors
 - GitHub-style contribution graphs for developer activity
+- Interactive world map with conflict hotspots
 
 ## Tech Stack
 - **React** - UI framework

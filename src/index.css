@@ -21,9 +21,9 @@ input, button, textarea, select {
     --text-dim: #4a5a6a;
 
     /* Fonts */
-    --font-display: 'Chakra Petch', 'Orbitron', sans-serif;
-    --font-main: 'Work Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'Victor Mono', 'Fira Code', 'Source Code Pro', monospace;
+    --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-main: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
 
     /* Accent colors */
     --accent: #00e5ff;
@@ -43,12 +43,23 @@ input, button, textarea, select {
     --purple-dim: rgba(168, 85, 247, 0.15);
 
     /* Glassmorphism & Depth */
-    --glass-bg: rgba(10, 10, 10, 0.4);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(22, 27, 34, 0.6);
+    --glass-border: rgba(48, 54, 61, 0.6);
     --glass-blur: 12px;
-    --panel-border: 1px solid rgba(255, 255, 255, 0.05);
-    --panel-border-top: 1px solid rgba(255, 255, 255, 0.1);
+    --panel-border: 1px solid rgba(48, 54, 61, 0.5);
+    --panel-border-top: 1px solid rgba(48, 54, 61, 0.8);
     --panel-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    /* Extended theme-aware variables (defaults match GitHub Dark) */
+    --nav-bg: rgba(13, 17, 23, 0.98);
+    --panel-header-bg: rgba(13, 17, 23, 0.5);
+    --glass-border-hover: rgba(99, 110, 123, 0.8);
+    --panel-item-bg: rgba(255, 255, 255, 0.03);
+    --panel-item-hover: rgba(255, 255, 255, 0.06);
+    --overlay-bg: rgba(0, 0, 0, 0.8);
+    --ticker-bg: rgba(13, 17, 23, 0.9);
+    --ticker-fade: rgba(13, 17, 23, 1);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.25);
 }
 
 html {
@@ -59,8 +70,9 @@ body {
     font-family: var(--font-main);
     background: var(--bg-dark);
     color: var(--text-primary);
-    line-height: 1.5;
-    font-size: 14px;
+    line-height: 1.6;
+    font-size: 15px;
+    font-feature-settings: 'kern' 1, 'liga' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -124,13 +136,13 @@ body::after {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--scrollbar-thumb);
     border-radius: 10px;
     transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--scrollbar-thumb-hover);
 }
 
 /* Global Micro-Interactions */
