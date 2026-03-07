@@ -1,6 +1,6 @@
 # Alpha Monitor
 
-![Alpha Monitor](public/dashboard.png)
+![Alpha Monitor](client/public/dashboard.png)
 
 A real-time monitoring dashboard for markets, news, and geopolitical events.
 
@@ -29,12 +29,14 @@ A real-time monitoring dashboard for markets, news, and geopolitical events.
 ### Installation
 
 ```bash
+cd client
 npm install
 ```
 
 ### Development
 
 ```bash
+cd client
 npm run dev
 ```
 
@@ -43,81 +45,74 @@ Open [http://localhost:3000](http://localhost:3000) (or the port shown in the te
 ### Build
 
 ```bash
+cd client
 npm run build
 ```
 
 ## Project Structure
 
 ```
-src/
-├── App.jsx                 # Main app with routing
-├── App.css
-├── rootProviders.jsx       # Root providers (Theme, Refresh)
-├── index.js                # Barrel exports
+world_monitor/
 │
-├── components/             # Shared/reusable components
-│   ├── feedback/ErrorBoundary/
-│   ├── layout/
-│   │   ├── CategoryTabs/
-│   │   ├── CommandModal/
-│   │   ├── Navbar/
-│   │   └── SettingsModal/
-│   ├── ui/
-│   │   ├── NewsWireFeed/
-│   │   └── Panel/
-│   └── visualization/
-│       └── DeveloperActivity/
+├── client/                            # React frontend application
+│   ├── public/                        # Static assets
+│   ├── src/
+│   │   ├── app/                       # App entry point and routing
+│   │   │   ├── App.jsx                # Main component with routes
+│   │   │   ├── App.css
+│   │   │   ├── main.jsx               # React DOM render entry
+│   │   │   └── index.css              # Global styles
+│   │   │
+│   │   ├── config/                    # App configuration
+│   │   │   ├── panels.js              # Panel definitions, categories, command modes
+│   │   │   ├── regions.js             # Geographic hotspots
+│   │   │   └── themes.js              # 13 colour themes
+│   │   │
+│   │   ├── context/                   # React Context providers
+│   │   │   ├── RefreshContext.jsx      # Global refresh counter
+│   │   │   └── ThemeContext.jsx        # Active theme state
+│   │   │
+│   │   ├── features/                  # Feature-based modules (co-located)
+│   │   │   ├── ai-race/               # AI company news feed
+│   │   │   ├── blockchain/            # Crypto news + on-chain metrics
+│   │   │   ├── dashboard/             # Dashboard page + Panel, ErrorBoundary, CategoryTabs
+│   │   │   ├── good-news/             # Positive news feed
+│   │   │   ├── heatmap/               # Sector performance heatmap
+│   │   │   ├── layoffs/               # Tech layoffs tracker
+│   │   │   ├── map/                   # Interactive global map + GlobalMap, HotspotModal
+│   │   │   ├── markets/               # Stock & crypto prices + TickerStrip
+│   │   │   ├── navigation/            # Navbar, CommandModal, SettingsModal
+│   │   │   ├── news/                  # General RSS news panel
+│   │   │   ├── startups/              # Startup funding rounds
+│   │   │   ├── vc-activity/           # VC fund activity
+│   │   │   └── war-watch/             # Defence & conflict news
+│   │   │
+│   │   ├── hooks/                     # Custom React hooks
+│   │   │   ├── useDynamicRegions.js   # Geopolitical severity scoring
+│   │   │   ├── useFeedData.js         # Shared polling hook for feeds
+│   │   │   ├── useLocalStorage.js     # localStorage state hook
+│   │   │   └── usePanelSettings.js    # Panel visibility preferences
+│   │   │
+│   │   ├── services/                  # Data fetching services
+│   │   │   ├── baseFeedService.js     # Core RSS fetch/parse
+│   │   │   ├── createFeedFetcher.js   # Factory for simple feed fetchers
+│   │   │   ├── feedConfig.js          # RSS feed URL registry
+│   │   │   ├── mapFeedService.js      # Map data feeds
+│   │   │   ├── chainStats.js          # Blockchain metrics
+│   │   │   └── githubActivity.js      # GitHub stats
+│   │   │
+│   │   └── utils/                     # Utility functions
+│   │       ├── dateHelpers.js         # Time formatters
+│   │       ├── fetchUtils.js          # CORS-proxy fetch
+│   │       └── helpers.js             # Number/text formatters
+│   │
+│   ├── index.html                     # HTML entry point
+│   ├── package.json                   # Dependencies and scripts
+│   └── vite.config.js                 # Vite configuration
 │
-├── config/
-│   ├── panels.js           # Panel definitions, categories
-│   ├── regions.js          # Geographic hotspots
-│   └── themes.js           # 13 colour themes
-│
-├── context/
-│   ├── RefreshContext.jsx  # Global refresh counter
-│   └── ThemeContext.jsx    # Active theme state
-│
-├── hooks/
-│   ├── useDynamicRegions.js  # Geopolitical severity scoring
-│   ├── useFeedData.js        # Shared polling hook for feeds
-│   ├── useLocalStorage.js    # localStorage state hook
-│   └── usePanelSettings.js   # Panel visibility preferences
-│
-├── services/               # All services flattened
-│   ├── baseFeedService.js  # Core RSS fetch/parse
-│   ├── feedConfig.js       # RSS feed URL registry
-│   ├── mapFeedService.js   # Map data feeds
-│   ├── chainStats.js       # Blockchain metrics
-│   ├── githubActivity.js   # GitHub stats
-│   └── newsFeedService.js  # News RSS service
-│
-├── utils/
-│   ├── dateHelpers.js      # Time formatters
-│   ├── fetchUtils.js       # CORS-proxy fetch
-│   └── helpers.js          # Number/text formatters
-│
-├── features/               # Main pages ONLY
-│   ├── dashboard/
-│   │   ├── Dashboard.jsx   # Dashboard page
-│   │   └── index.js
-│   └── map/
-│       ├── Map.jsx         # Map page
-│       └── components/
-│           └── GlobalMap/
-│
-└── feeds/                  # All 11 feed panels (flattened)
-    ├── ai-race/
-    │   ├── AiRacePanel.jsx
-    │   └── aiRaceFeedService.js
-    ├── blockchain/
-    ├── good-news/
-    ├── heatmap/
-    ├── layoffs/
-    ├── markets/            # Includes TickerStrip
-    ├── news/
-    ├── startups/
-    ├── vc-activity/
-    └── war-watch/
+├── .gitignore
+├── PROJECT_STRUCTURE.md
+└── README.md
 ```
 
 ## Architecture Notes
