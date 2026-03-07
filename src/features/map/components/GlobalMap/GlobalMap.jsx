@@ -43,11 +43,11 @@ const GlobalMap = () => {
 
   // Layer visibility state
   const [layerVisibility, setLayerVisibility] = useState({
-    hotspots: true,
+    hotspots: false,
     intelHotspots: true,
-    shippingChokepoints: true,
-    conflictZones: true,
-    militaryBases: true,
+    shippingChokepoints: false,
+    conflictZones: false,
+    militaryBases: false,
     nuclearFacilities: false,
     underseaCables: false,
     cyberRegions: false,
