@@ -15,11 +15,6 @@ export const formatAmount = (amount) => {
   return `$${amount}M`
 }
 
-export const formatCount = (count) => {
-  if (count >= 1000) return `${(count / 1000).toFixed(1)}K`
-  return count.toString()
-}
-
 export const truncateText = (text, maxLength = 100) => {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength) + '...'

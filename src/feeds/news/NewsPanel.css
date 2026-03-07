@@ -215,14 +215,6 @@
   letter-spacing: 0.05em;
 }
 
-.loading-msg {
-  padding: 2rem;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.7rem;
-  letter-spacing: 0.05em;
-}
-
 .error-msg {
   padding: 2rem;
   text-align: center;

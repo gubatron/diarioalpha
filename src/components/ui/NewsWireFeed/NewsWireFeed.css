@@ -79,10 +79,3 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-
-.loading-msg {
-    padding: 1rem;
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-}

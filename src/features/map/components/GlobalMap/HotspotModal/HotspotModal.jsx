@@ -88,7 +88,7 @@ const formatNewsDate = (dateStr) => {
   }
 }
 
-const HotspotModal = ({ selectedHotspot, onClose }) => {
+const HotspotModal = ({ selectedHotspot, onClose, newsLoading }) => {
   if (!selectedHotspot) return null
 
   const relatedAssets = getRelatedAssets(selectedHotspot)
@@ -170,7 +170,15 @@ const HotspotModal = ({ selectedHotspot, onClose }) => {
       )}
       
       {/* LIVE INTEL SECTION */}
-      {selectedHotspot.news && selectedHotspot.news.length > 0 && (
+      {newsLoading ? (
+        <div className="hotspot-popup-headlines">
+          <div className="hotspot-popup-headlines-title">LIVE INTEL</div>
+          <div className="hotspot-popup-loading">
+            <div className="loading-spinner"></div>
+            <span>Loading intel...</span>
+          </div>
+        </div>
+      ) : selectedHotspot.news && selectedHotspot.news.length > 0 ? (
         <div className="hotspot-popup-headlines">
           <div className="hotspot-popup-headlines-title">LIVE INTEL ({selectedHotspot.news.length})</div>
           {selectedHotspot.news.map((item, i) => (
@@ -181,6 +189,11 @@ const HotspotModal = ({ selectedHotspot, onClose }) => {
               <div className="hotspot-popup-source">{item.source} • {formatNewsDate(item.pubDate)}</div>
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="hotspot-popup-headlines">
+          <div className="hotspot-popup-headlines-title">LIVE INTEL</div>
+          <div className="hotspot-popup-no-intel">No intel available for this location.</div>
         </div>
       )}
       <button className="hotspot-popup-close" onClick={onClose}>×</button>
