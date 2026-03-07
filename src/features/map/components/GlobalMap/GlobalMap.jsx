@@ -446,9 +446,9 @@ const GlobalMap = () => {
 
         hotspotsData.forEach(hotspot => {
           if (!isMarkerVisible(hotspot.lon, hotspot.lat)) return
-          const coords = [hotspot.lon, hotspot.lat]
-          const projected = projection(coords)
+          const projected = projection([hotspot.lon, hotspot.lat])
           if (!projected) return
+          const [x, y] = projected
 
           const severity = hotspot.severity || hotspot.level
           const group = hotspotsGroup.append('g')
