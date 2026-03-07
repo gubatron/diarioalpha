@@ -4,7 +4,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 380px;
+  width: 420px;
   background: rgba(10, 14, 20, 0.98);
   border-left: 1px solid var(--accent);
   padding: 1.5rem;
@@ -152,8 +152,6 @@
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color);
-  max-height: 200px;
-  overflow-y: auto;
 }
 
 .hotspot-popup-headlines-title {
@@ -181,6 +179,7 @@
   display: block;
   margin-bottom: 0.25rem;
   transition: color 0.2s;
+  line-height: 1.4;
 }
 
 .hotspot-popup-headline a:hover {

@@ -536,6 +536,101 @@ export const INTEL_HOTSPOTS = [
     description: 'Premier US foreign policy think tank. Research, analysis, and policy recommendations on global affairs.',
     agencies: ['CFR'],
     status: 'Active research'
+  },
+  // Australia / Oceania
+  {
+    id: 'canberra', name: 'Canberra', subtext: 'AUKUS / Five Eyes', lat: -35.2809, lon: 149.1300,
+    keywords: ['australia', 'canberra', 'aukus', 'five eyes', 'australian', 'albanese', 'pine gap'],
+    description: 'Australian government and defense headquarters. AUKUS alliance, Five Eyes intelligence partner, Indo-Pacific strategy.',
+    agencies: ['ASD', 'ASIO', 'ADF', 'ASIS'],
+    status: 'Alliance coordination'
+  },
+  {
+    id: 'sydney', name: 'Sydney', subtext: 'Pacific Economic Hub', lat: -33.8688, lon: 151.2093,
+    keywords: ['sydney', 'australia', 'australian economy', 'pacific trade', 'new south wales'],
+    description: 'Australia\'s largest city and financial center. Major Pacific trade hub, technology sector, defense industries.',
+    agencies: ['ASX', 'RBA'],
+    status: 'Economic monitoring'
+  },
+  {
+    id: 'perth', name: 'Perth', subtext: 'Indian Ocean / HMAS Stirling', lat: -31.9505, lon: 115.8605,
+    keywords: ['perth', 'western australia', 'hmas stirling', 'indian ocean', 'aukus submarine', 'mining'],
+    description: 'Western gateway to Indian Ocean. HMAS Stirling naval base (SRF-West) for AUKUS submarine rotations. Major mining and resources sector.',
+    agencies: ['RAN', 'ADF'],
+    status: 'AUKUS submarine hub'
+  },
+  {
+    id: 'darwin', name: 'Darwin', subtext: 'US Force Posture', lat: -12.4634, lon: 130.8456,
+    keywords: ['darwin', 'northern territory', 'us marines', 'force posture', 'tindal', 'indo-pacific'],
+    description: 'Strategic northern military hub. US Marine rotational deployments, RAAF Tindal expansion, closest major base to Southeast Asia.',
+    agencies: ['USMC', 'RAAF', 'ADF'],
+    status: 'Force posture expansion'
+  },
+  // Africa
+  {
+    id: 'lagos', name: 'Lagos', subtext: 'West Africa Hub', lat: 6.5244, lon: 3.3792,
+    keywords: ['nigeria', 'lagos', 'boko haram', 'oil', 'west africa', 'ecowas'],
+    description: 'Nigeria\'s economic capital and Africa\'s largest city. Oil sector, regional security, ECOWAS dynamics.',
+    agencies: ['DSS', 'NIA'],
+    status: 'Regional monitoring'
+  },
+  {
+    id: 'nairobi', name: 'Nairobi', subtext: 'East Africa Security', lat: -1.2921, lon: 36.8219,
+    keywords: ['kenya', 'nairobi', 'east africa', 'al-shabaab', 'somalia', 'african union'],
+    description: 'East African diplomatic and security hub. AU peacekeeping coordination, counter-terrorism, regional trade.',
+    agencies: ['NIS', 'KDF', 'AMISOM/ATMIS'],
+    status: 'Counter-terrorism ops'
+  },
+  {
+    id: 'addis_ababa', name: 'Addis Ababa', subtext: 'African Union HQ', lat: 9.0250, lon: 38.7469,
+    keywords: ['ethiopia', 'addis ababa', 'african union', 'tigray', 'horn of africa', 'red sea'],
+    description: 'African Union headquarters. Continental diplomacy, Horn of Africa security, post-Tigray stabilization.',
+    agencies: ['AU', 'NISS', 'IGAD'],
+    status: 'Continental diplomacy'
+  },
+  // South America
+  {
+    id: 'brasilia', name: 'Brasília', subtext: 'BRICS / Regional Power', lat: -15.7975, lon: -47.8919,
+    keywords: ['brazil', 'brasilia', 'lula', 'brics', 'amazon', 'south america'],
+    description: 'Brazilian government center. BRICS member, regional influence, Amazon security, defense industry.',
+    agencies: ['ABIN', 'Armed Forces', 'Itamaraty'],
+    status: 'BRICS coordination'
+  },
+  {
+    id: 'buenos_aires', name: 'Buenos Aires', subtext: 'Southern Cone Watch', lat: -34.6037, lon: -58.3816,
+    keywords: ['argentina', 'buenos aires', 'milei', 'mercosur', 'falklands', 'lithium'],
+    description: 'Argentine capital. Economic reforms under Milei, Mercosur dynamics, lithium triangle, Falklands sovereignty claims.',
+    agencies: ['AFI', 'Armed Forces'],
+    status: 'Economic restructuring'
+  },
+  {
+    id: 'bogota', name: 'Bogotá', subtext: 'Colombia Security', lat: 4.7110, lon: -74.0721,
+    keywords: ['colombia', 'bogota', 'farc', 'eln', 'drug trafficking', 'venezuela border'],
+    description: 'Colombian capital. Peace process monitoring, narcotics operations, Venezuelan border situation.',
+    agencies: ['DNI', 'Armed Forces', 'National Police'],
+    status: 'Peace negotiations'
+  },
+  // Additional strategic locations
+  {
+    id: 'cairo', name: 'Cairo', subtext: 'Suez / Middle East Broker', lat: 30.0444, lon: 31.2357,
+    keywords: ['egypt', 'cairo', 'suez canal', 'sisi', 'middle east', 'gaza mediator'],
+    description: 'Egyptian capital. Suez Canal oversight, Gaza ceasefire mediator, regional stabilization role.',
+    agencies: ['GIS', 'Armed Forces', 'Presidency'],
+    status: 'Mediation active'
+  },
+  {
+    id: 'islamabad', name: 'Islamabad', subtext: 'Nuclear State Watch', lat: 33.6844, lon: 73.0479,
+    keywords: ['pakistan', 'islamabad', 'isi', 'nuclear', 'kashmir', 'afghanistan border', 'taliban'],
+    description: 'Pakistani capital. Nuclear arsenal oversight, ISI operations, Afghanistan border dynamics, India tensions.',
+    agencies: ['ISI', 'SPD', 'Armed Forces'],
+    status: 'Heightened alert'
+  },
+  {
+    id: 'jakarta', name: 'Jakarta', subtext: 'ASEAN / Maritime Security', lat: -6.2088, lon: 106.8456,
+    keywords: ['indonesia', 'jakarta', 'asean', 'south china sea', 'natuna', 'maritime'],
+    description: 'ASEAN largest member. Maritime sovereignty disputes, South China Sea dynamics, regional trade hub.',
+    agencies: ['BIN', 'TNI', 'Bakamla'],
+    status: 'Maritime monitoring'
   }
 ]
 
