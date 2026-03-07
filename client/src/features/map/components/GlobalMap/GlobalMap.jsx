@@ -8,7 +8,7 @@ import {
 import { MapFeedService } from '@services/mapFeedService'
 import { useDynamicRegions } from '@hooks/useDynamicRegions'
 import HotspotModal from './HotspotModal/HotspotModal'
-import TickerStrip from '@feeds/markets/TickerStrip/TickerStrip'
+import TickerStrip from '@features/markets/TickerStrip/TickerStrip'
 import './GlobalMap.css'
 
 const GlobalMap = () => {
