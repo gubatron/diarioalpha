@@ -21,7 +21,7 @@ const GlobalMap = () => {
   const [worldData, setWorldData] = useState(null)
   const [usData, setUsData] = useState(null)
   const [selectedHotspot, setSelectedHotspot] = useState(null)
-  const [allNews, setAllNews] = useState([])
+  const [newsLoading, setNewsLoading] = useState(false)
   const [isDragging, setIsDragging] = useState(false) // Track if user is dragging
 
   // Use dynamic regions hook
@@ -56,10 +56,6 @@ const GlobalMap = () => {
 
   useEffect(() => {
     loadMapData()
-    fetchMapNews()
-    // Refetch news every 5 minutes
-    const newsInterval = setInterval(fetchMapNews, 5 * 60 * 1000)
-    return () => clearInterval(newsInterval)
   }, [])
 
   // Update layer visibility based on map view
@@ -88,16 +84,6 @@ const GlobalMap = () => {
 
     return () => clearInterval(interval)
   }, [isAutoRotating, isUserInteracting, mapView, zoomLevel])
-
-  const fetchMapNews = async () => {
-    try {
-      const news = await MapFeedService.fetchMapNews()
-      setAllNews(news)
-      console.log('All news fetched:', news.length, 'items')
-    } catch (e) {
-      console.error('Error fetching map news:', e)
-    }
-  }
 
   useEffect(() => {
     try {
@@ -201,6 +187,13 @@ const GlobalMap = () => {
       }
 
       const path = d3.geoPath().projection(projection)
+
+      // Helper: check if a point is on the visible side of the globe
+      const isMarkerVisible = (lon, lat) => {
+        if (mapView !== 'global' || zoomLevel > 2) return true
+        const center = [-rotation[0], -rotation[1]]
+        return d3.geoDistance([lon, lat], center) < Math.PI / 2
+      }
 
       // Background
       svg.append('rect')
@@ -310,59 +303,6 @@ const GlobalMap = () => {
           .attr('height', 60)
           .attr('fill', 'url(#smallGrid)')
 
-        // Add additional layers (Global Only)
-        // Shipping Chokepoints
-        if (layerVisibility.shippingChokepoints) {
-          const chokeGroup = svg.append('g').attr('class', 'chokepoints')
-          SHIPPING_CHOKEPOINTS.forEach(point => {
-            const projected = projection([point.lon, point.lat])
-            if (!projected) return
-            const [x, y] = projected
-            if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
-            const g = chokeGroup.append('g')
-              .attr('transform', `translate(${x},${y})`)
-              .style('cursor', 'pointer')
-
-            g.on('click', () => {
-              if (!isDragging) handleHotspotClick({ ...point, type: 'chokepoint' })
-            })
-
-            g.call(d3.drag()
-              .on('start', () => setIsDragging(false))
-              .on('drag', (event) => {
-                event.sourceEvent.stopPropagation()
-                setIsDragging(true)
-                const sensitivity = 0.5
-                const currentRotation = rotationRef.current
-                const newRotation = [
-                  currentRotation[0] + event.dx * sensitivity,
-                  Math.max(-90, Math.min(90, currentRotation[1] - event.dy * sensitivity))
-                ]
-                rotationRef.current = newRotation
-                setRotation(newRotation)
-              })
-              .on('end', () => setTimeout(() => setIsDragging(false), 50))
-            )
-
-            g.append('rect')
-              .attr('x', -6).attr('y', -6)
-              .attr('width', 12).attr('height', 12)
-              .attr('fill', '#00ff00')
-              .attr('stroke', '#ffffff')
-              .attr('stroke-width', 1)
-
-            g.append('text')
-              .attr('x', 0)
-              .attr('y', -15)
-              .attr('text-anchor', 'middle')
-              .attr('fill', '#00ff00')
-              .attr('stroke', '#ffffff')
-              .attr('stroke-width', '0.5px')
-              .attr('font-size', '10px')
-              .text(point.name)
-          })
-        }
-
         svg.append('rect')
           .attr('width', width)
           .attr('height', height)
@@ -393,19 +333,7 @@ const GlobalMap = () => {
           .attr('fill', 'var(--map-land)')
           .attr('stroke', 'var(--map-stroke)')
           .attr('stroke-width', 0.5)
-          .style('cursor', 'pointer')
           .style('pointer-events', 'visiblePainted')
-          .on('click', (event, d) => {
-            if (!isDragging) handleCountryClick(d)
-          })
-          .on('mouseenter', function (event, d) {
-            d3.select(this)
-              .attr('fill', 'var(--map-hover)')
-              .attr('stroke', 'var(--accent)')
-          })
-          .on('mouseleave', function (event, d) {
-            d3.select(this).attr('fill', 'var(--map-land)').attr('stroke', 'var(--map-stroke)')
-          })
           .call(d3.drag()
             .on('start', function (event) {
               event.sourceEvent.stopPropagation()
@@ -517,11 +445,10 @@ const GlobalMap = () => {
         const hotspotsGroup = svg.append('g').attr('class', 'hotspots')
 
         hotspotsData.forEach(hotspot => {
+          if (!isMarkerVisible(hotspot.lon, hotspot.lat)) return
           const coords = [hotspot.lon, hotspot.lat]
           const projected = projection(coords)
           if (!projected) return
-          const [x, y] = projected
-          if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
 
           const severity = hotspot.severity || hotspot.level
           const group = hotspotsGroup.append('g')
@@ -581,10 +508,10 @@ const GlobalMap = () => {
         if (layerVisibility.shippingChokepoints) {
           const chokeGroup = svg.append('g').attr('class', 'chokepoints')
           SHIPPING_CHOKEPOINTS.forEach(point => {
+            if (!isMarkerVisible(point.lon, point.lat)) return
             const projected = projection([point.lon, point.lat])
             if (!projected) return
             const [x, y] = projected
-            if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
             const g = chokeGroup.append('g')
               .attr('transform', `translate(${x},${y})`)
               .style('cursor', 'pointer')
@@ -623,10 +550,10 @@ const GlobalMap = () => {
         if (layerVisibility.conflictZones) {
           const conflictGroup = svg.append('g').attr('class', 'conflict-zones')
           conflictZones.forEach(zone => {
+            if (!isMarkerVisible(zone.labelPos.lon, zone.labelPos.lat)) return
             const projected = projection([zone.labelPos.lon, zone.labelPos.lat])
             if (!projected) return
             const [x, y] = projected
-            if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
 
             const intensity = zone.intensity || 'medium'
             const color = intensity === 'high' ? '#ff3333' : intensity === 'elevated' ? '#ffcc00' : '#ccff00'
@@ -675,10 +602,10 @@ const GlobalMap = () => {
         if (layerVisibility.militaryBases) {
           const baseGroup = svg.append('g').attr('class', 'military-bases')
           MILITARY_BASES.forEach(base => {
+            if (!isMarkerVisible(base.lon, base.lat)) return
             const projected = projection([base.lon, base.lat])
             if (!projected) return
             const [x, y] = projected
-            if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
             const g = baseGroup.append('g')
               .attr('transform', `translate(${x},${y})`)
               .style('cursor', 'pointer')
@@ -715,10 +642,10 @@ const GlobalMap = () => {
         if (layerVisibility.nuclearFacilities) {
           const nucGroup = svg.append('g').attr('class', 'nuclear-facilities')
           NUCLEAR_FACILITIES.forEach(nuc => {
+            if (!isMarkerVisible(nuc.lon, nuc.lat)) return
             const projected = projection([nuc.lon, nuc.lat])
             if (!projected) return
             const [x, y] = projected
-            if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
             const g = nucGroup.append('g')
               .attr('transform', `translate(${x},${y})`)
               .style('cursor', 'pointer')
@@ -785,10 +712,10 @@ const GlobalMap = () => {
         if (layerVisibility.cyberRegions) {
           const cyberGroup = svg.append('g').attr('class', 'cyber-regions')
           CYBER_REGIONS.forEach(reg => {
+            if (!isMarkerVisible(reg.lon, reg.lat)) return
             const projected = projection([reg.lon, reg.lat])
             if (!projected) return
             const [x, y] = projected
-            if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
             const g = cyberGroup.append('g')
               .attr('transform', `translate(${x},${y})`)
               .style('cursor', 'pointer')
@@ -840,11 +767,11 @@ const GlobalMap = () => {
         intelHotspots.forEach(intel => {
           // Skip DC in US view since it's already rendered as a city
           if (mapView === 'us' && intel.id === 'dc') return
+          if (!isMarkerVisible(intel.lon, intel.lat)) return
 
           const projected = projection([intel.lon, intel.lat])
           if (!projected) return
           const [x, y] = projected
-          if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return
 
           // Determine severity for intel hotspots
           let severity = 'medium' // default
@@ -952,58 +879,44 @@ const GlobalMap = () => {
     }))
   }
 
-  const handleHotspotClick = (hotspot) => {
-    // Find relevant news
-    const newsItems = allNews.filter(item => {
-      const text = (item.title + ' ' + (item.summary || '')).toLowerCase()
-      // Check keywords
-      if (hotspot.keywords && hotspot.keywords.some(k => text.includes(k.toLowerCase()))) return true
-      // Check name
-      if (text.includes(hotspot.name.toLowerCase())) return true
-      return false
-    }).slice(0, 5)
-
+  const handleHotspotClick = async (hotspot) => {
     // Normalize description field - some use 'desc' instead of 'description'
     const normalizedHotspot = {
       ...hotspot,
       description: hotspot.description || hotspot.desc || `Monitoring situation in ${hotspot.name}.`,
       type: hotspot.type || 'hotspot',
-      news: newsItems
+      news: []
     }
 
+    // Open modal immediately with loading state
     setSelectedHotspot(normalizedHotspot)
+    setNewsLoading(true)
+
+    // Fetch news for this specific marker
+    try {
+      const newsItems = await MapFeedService.fetchNewsForHotspot(hotspot)
+      setSelectedHotspot(prev => prev ? { ...prev, news: newsItems } : null)
+    } catch (e) {
+      console.error('Error fetching news for hotspot:', e)
+    } finally {
+      setNewsLoading(false)
+    }
   }
 
-  const handleIntelHotspotClick = (intel) => {
-    // Find relevant news
-    const newsItems = allNews.filter(item => {
-      const text = (item.title + ' ' + (item.summary || '')).toLowerCase()
+  const handleIntelHotspotClick = async (intel) => {
+    // Open modal immediately with loading state
+    setSelectedHotspot({ ...intel, type: 'intel', news: [] })
+    setNewsLoading(true)
 
-      // Standard keyword matching
-      if (intel.keywords && intel.keywords.some(k => text.includes(k.toLowerCase()))) return true
-      if (text.includes(intel.name.toLowerCase())) return true
-      return false
-    }).slice(0, 5)
-    console.log(`Intel hotspot ${intel.id} clicked, news items found:`, newsItems.length, newsItems)
-    setSelectedHotspot({ ...intel, type: 'intel', news: newsItems })
-  }
-
-  const handleCountryClick = (countryFeature) => {
-    // Get country name from properties
-    const countryName = countryFeature.properties?.NAME || countryFeature.properties?.name || 'Unknown Country'
-
-    // Find relevant news for this country
-    const newsItems = allNews.filter(item => {
-      const text = (item.title + ' ' + (item.summary || '')).toLowerCase()
-      return text.includes(countryName.toLowerCase())
-    }).slice(0, 5)
-
-    setSelectedHotspot({
-      name: countryName,
-      type: 'country',
-      news: newsItems,
-      location: countryName
-    })
+    // Fetch news for this specific marker
+    try {
+      const newsItems = await MapFeedService.fetchNewsForHotspot(intel)
+      setSelectedHotspot(prev => prev ? { ...prev, news: newsItems } : null)
+    } catch (e) {
+      console.error('Error fetching news for intel hotspot:', e)
+    } finally {
+      setNewsLoading(false)
+    }
   }
 
   const closePopup = () => {
@@ -1062,14 +975,9 @@ const GlobalMap = () => {
           <span className={`stat-value alert-${alertLevel.toLowerCase()}`}>{alertLevel}</span>
         </div>
         <div className="stat-divider"></div>
-        <div 
-          className="stat-item" 
-          style={{ cursor: 'pointer' }} 
-          onClick={() => fetchMapNews()} 
-          title="Click to refresh intel"
-        >
-          <span className="stat-label">INTEL UPDATES</span>
-          <span className="stat-value">{allNews.length > 0 ? allNews.length : '—'}</span>
+        <div className="stat-item">
+          <span className="stat-label">INTEL HOTSPOTS</span>
+          <span className="stat-value">{totalIntel > 0 ? totalIntel : '—'}</span>
         </div>
         <div className="stat-divider"></div>
         <div className="stat-item">
@@ -1266,7 +1174,7 @@ const GlobalMap = () => {
         </div>
       </div>
       <svg ref={svgRef}></svg>
-      <HotspotModal selectedHotspot={selectedHotspot} onClose={closePopup} />
+      <HotspotModal selectedHotspot={selectedHotspot} onClose={closePopup} newsLoading={newsLoading} />
       <TickerStrip mode="geo" />
     </div>
   )

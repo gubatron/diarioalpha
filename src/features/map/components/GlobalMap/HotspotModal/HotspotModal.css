@@ -254,3 +254,32 @@
 
 .asset-change.positive { color: #00ff88; }
 .asset-change.negative { color: #ff3333; }
+
+/* Loading state */
+.hotspot-popup-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.hotspot-popup-loading .loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hotspot-popup-no-intel {
+  padding: 0.75rem 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}

@@ -80,4 +80,37 @@ export class MapFeedService {
       return []
     }
   }
+
+  /**
+   * Fetch news for a specific hotspot on demand
+   * Uses the hotspot's name and keywords to search for relevant news
+   * @param {Object} hotspot - Hotspot object with name and optional keywords
+   * @returns {Promise<Array>} Array of news items relevant to the hotspot
+   */
+  static async fetchNewsForHotspot(hotspot) {
+    try {
+      const queries = []
+
+      // Use keywords if available, otherwise fall back to name
+      if (hotspot.keywords && hotspot.keywords.length > 0) {
+        queries.push(hotspot.keywords.slice(0, 3).join(' '))
+      } else if (hotspot.name) {
+        queries.push(hotspot.name)
+      }
+
+      if (queries.length === 0) return []
+
+      const results = await Promise.allSettled(
+        queries.map(q => this.fetchGoogleNews(q))
+      )
+
+      return results
+        .filter(r => r.status === 'fulfilled')
+        .flatMap(r => r.value)
+        .slice(0, 5)
+    } catch (e) {
+      console.error('Error fetching news for hotspot:', e)
+      return []
+    }
+  }
 }
