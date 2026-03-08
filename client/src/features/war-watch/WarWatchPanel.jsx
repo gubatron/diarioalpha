@@ -1,4 +1,4 @@
-import { createFeedFetcher } from '@services/createFeedFetcher'
+import { createFeedFetcher } from '@features/news/createFeedFetcher'
 import { useI18n } from '@context/I18nContext'
 import { useFeedData } from '@hooks/useFeedData'
 import { getTimeAgo } from '@utils/dateHelpers'
