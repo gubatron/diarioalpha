@@ -6,7 +6,7 @@ const ThemeContext = createContext()
 export const ThemeProvider = ({ children }) => {
     const [currentTheme, setCurrentTheme] = useState(() => {
         try {
-            const saved = localStorage.getItem('alpha_monitor_theme')
+            const saved = localStorage.getItem('world_monitor_theme')
             return (saved && THEMES[saved]) ? saved : 'githubDark'
         } catch {
             return 'githubDark'
@@ -23,7 +23,7 @@ export const ThemeProvider = ({ children }) => {
                 root.style.setProperty(key, value)
             })
 
-            localStorage.setItem('alpha_monitor_theme', currentTheme)
+            localStorage.setItem('world_monitor_theme', currentTheme)
         } catch (e) {
             console.error('Failed to apply theme:', e)
         }

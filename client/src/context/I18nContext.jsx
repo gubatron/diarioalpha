@@ -3,7 +3,7 @@ import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, TRANSLATIONS } from '@i18n/trans
 
 const I18nContext = createContext(null)
 
-const LANGUAGE_STORAGE_KEY = 'alpha_monitor_language'
+const LANGUAGE_STORAGE_KEY = 'world_monitor_language'
 
 const languageMap = Object.fromEntries(SUPPORTED_LANGUAGES.map((language) => [language.code, language]))
 

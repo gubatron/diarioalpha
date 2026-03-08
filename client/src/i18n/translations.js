@@ -11,7 +11,7 @@ export const DEFAULT_LANGUAGE = 'en'
 
 const shared = {
   app: {
-    title: 'ALPHA MONITOR',
+    title: 'WORLD MONITOR',
   },
   common: {
     live: 'LIVE',
