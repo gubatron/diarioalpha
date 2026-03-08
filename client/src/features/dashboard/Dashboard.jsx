@@ -2,14 +2,14 @@ import { useState, useCallback } from 'react'
 import Panel from './Panel'
 import ErrorBoundary from './ErrorBoundary'
 import { PANELS, COMMAND_MODES } from '@config/panels'
-import { NEWS_FEEDS } from '@services/feedConfig'
+import { NEWS_FEEDS } from '@features/news/feedConfig'
 import NewsPanel from '@features/news/NewsPanel'
 import StartupsPanel from '@features/startups/StartupsPanel'
 import VCPanel from '@features/vc-activity/VCPanel'
-import BlockchainPanel from '@features/blockchain/BlockchainPanel'
+import CryptoPanel from '@features/crypto/CryptoPanel'
 import WarWatchPanel from '@features/war-watch/WarWatchPanel'
 import LayoffsPanel from '@features/layoffs/LayoffsPanel'
-import DeveloperActivity from './DeveloperActivity'
+import DeveloperActivity from '@features/developer-activity/DeveloperActivity'
 import CategoryTabs from './CategoryTabs'
 import TickerStrip from '@features/markets/TickerStrip'
 import { useI18n } from '@context/I18nContext'
@@ -96,7 +96,7 @@ const Dashboard = ({ panelSettings, currentMode }) => {
       case 'vc':
         return <VCPanel />
       case 'blockchain':
-        return <BlockchainPanel />
+        return <CryptoPanel />
       case 'warwatch':
         return <WarWatchPanel />
       case 'layoffs':
