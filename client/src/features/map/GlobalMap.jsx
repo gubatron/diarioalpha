@@ -5,7 +5,7 @@ import {
   US_CITIES, SHIPPING_CHOKEPOINTS, MILITARY_BASES,
   NUCLEAR_FACILITIES, UNDERSEA_CABLES, CYBER_REGIONS
 } from '@config/regions.js'
-import { MapFeedService } from '@services/mapFeedService'
+import { MapFeedService } from './mapFeedService'
 import { useDynamicRegions } from '@hooks/useDynamicRegions'
 import { useI18n } from '@context/I18nContext'
 import HotspotModal from './HotspotModal'
