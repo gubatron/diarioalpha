@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import { BaseFeedService } from '@services/baseFeedService'
+import { BaseFeedService } from './baseFeedService'
 import { RefreshContext } from '@context/RefreshContext'
 import { useI18n } from '@context/I18nContext'
 import { getTimeAgo } from '@utils/dateHelpers'
