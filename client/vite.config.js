@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => {
         '@config': path.resolve(__dirname, './src/config'),
         '@context': path.resolve(__dirname, './src/context'),
         '@hooks': path.resolve(__dirname, './src/hooks'),
+        '@i18n': path.resolve(__dirname, './src/i18n'),     // ← kept from your PR
         '@services': path.resolve(__dirname, './src/services'),
         '@utils': path.resolve(__dirname, './src/utils'),
       }
