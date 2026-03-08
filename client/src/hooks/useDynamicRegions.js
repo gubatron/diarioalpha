@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { HOTSPOTS, INTEL_HOTSPOTS, US_HOTSPOTS, CONFLICT_ZONES } from '@config/regions.js'
-import { NEWS_FEEDS } from '@services/feedConfig'
+import { NEWS_FEEDS } from '@features/news/feedConfig'
 import { fetchWithProxy, parseRSS } from '@utils/fetchUtils.js'
 
 // Urgency keywords that increase severity scores
