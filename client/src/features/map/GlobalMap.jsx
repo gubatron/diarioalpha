@@ -811,12 +811,13 @@ const GlobalMap = () => {
             const recentArticle = intel.matchedArticles && intel.matchedArticles.length > 0
               ? intel.matchedArticles[0]
               : null
-            const tooltipLabel = recentArticle
+            const tooltipLabel = recentArticle && recentArticle.title
               ? recentArticle.title.substring(0, 60) + (recentArticle.title.length > 60 ? '...' : '')
               : intel.name + (intel.subtext ? ' - ' + intel.subtext : '')
 
             tooltip.select('.tooltip-text').text(tooltipLabel)
-            const textWidth = tooltip.select('.tooltip-text').node().getComputedTextLength()
+            const textNode = tooltip.select('.tooltip-text').node()
+            const textWidth = textNode ? textNode.getComputedTextLength() : 100
             tooltip.select('.tooltip-bg')
               .attr('width', textWidth + 16)
               .attr('height', 22)
