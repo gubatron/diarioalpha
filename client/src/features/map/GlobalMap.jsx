@@ -377,14 +377,7 @@ const GlobalMap = () => {
           .attr('fill', 'var(--map-land)')
           .attr('stroke', 'var(--map-stroke)')
           .attr('stroke-width', 0.5)
-          .on('mouseenter', function (event, d) {
-            d3.select(this)
-              .attr('fill', 'var(--map-hover)')
-              .attr('stroke', 'var(--accent)')
-          })
-          .on('mouseleave', function (event, d) {
-            d3.select(this).attr('fill', 'var(--map-land)').attr('stroke', 'var(--map-stroke)')
-          })
+          .style('pointer-events', 'none')
 
         // Render US cities from config
         if (layerVisibility.usCities) {
@@ -766,6 +759,25 @@ const GlobalMap = () => {
       if (layerVisibility.intelHotspots) {
         const intelGroup = svg.append('g').attr('class', 'intel-hotspots')
 
+        // Create hover tooltip group (hidden by default)
+        const tooltip = svg.append('g')
+          .attr('class', 'marker-tooltip')
+          .style('pointer-events', 'none')
+          .style('display', 'none')
+
+        tooltip.append('rect')
+          .attr('class', 'tooltip-bg')
+          .attr('rx', 4)
+          .attr('ry', 4)
+
+        tooltip.append('text')
+          .attr('class', 'tooltip-text')
+          .attr('x', 8)
+          .attr('y', 14)
+          .attr('fill', '#e2e8f0')
+          .attr('font-size', '10px')
+          .attr('font-weight', '500')
+
         intelHotspots.forEach(intel => {
           // Skip DC in US view since it's already rendered as a city
           if (mapView === 'us' && intel.id === 'dc') return
@@ -775,19 +787,49 @@ const GlobalMap = () => {
           if (!projected) return
           const [x, y] = projected
 
-          // Determine severity for intel hotspots
-          let severity = 'medium' // default
-          if (intel.id === 'dc') severity = 'high' // DC is a major intelligence hub
-          else if (intel.status && intel.status.includes('High')) severity = 'high'
-          else if (intel.status && intel.status.includes('Elevated')) severity = 'elevated'
+          // Determine marker color based on news status
+          const hasNews = intel.matchCount && intel.matchCount > 0
+          const isHotspot = hasNews && (intel.severity === 'high' || intel.severity === 'critical')
+          let markerColor = '#888888' // grey - no news
+          if (isHotspot) {
+            markerColor = '#ff3333' // red - hotspot
+          } else if (hasNews) {
+            markerColor = '#00ff88' // green - has news
+          }
 
           const group = intelGroup.append('g')
-            .attr('class', `intel-hotspot ${severity}`)
+            .attr('class', `intel-hotspot ${isHotspot ? 'hotspot' : hasNews ? 'active' : 'inactive'}`)
             .attr('transform', `translate(${x},${y})`)
             .style('cursor', 'pointer')
 
           group.on('click', () => {
-            if (!isDragging) handleIntelHotspotClick({ ...intel, severity })
+            if (!isDragging) handleIntelHotspotClick({ ...intel, severity: intel.severity || 'medium' })
+          })
+
+          // Hover tooltip: show most recent story
+          group.on('mouseenter', function () {
+            const recentArticle = intel.matchedArticles && intel.matchedArticles.length > 0
+              ? intel.matchedArticles[0]
+              : null
+            const tooltipLabel = recentArticle
+              ? recentArticle.title.substring(0, 60) + (recentArticle.title.length > 60 ? '...' : '')
+              : intel.name + (intel.subtext ? ' - ' + intel.subtext : '')
+
+            tooltip.select('.tooltip-text').text(tooltipLabel)
+            const textWidth = tooltip.select('.tooltip-text').node().getComputedTextLength()
+            tooltip.select('.tooltip-bg')
+              .attr('width', textWidth + 16)
+              .attr('height', 22)
+              .attr('fill', 'rgba(10, 14, 20, 0.95)')
+              .attr('stroke', markerColor)
+              .attr('stroke-width', 1)
+
+            tooltip.attr('transform', `translate(${x + 14},${y - 24})`)
+            tooltip.style('display', null)
+          })
+
+          group.on('mouseleave', function () {
+            tooltip.style('display', 'none')
           })
 
           group.call(d3.drag()
@@ -807,25 +849,25 @@ const GlobalMap = () => {
             .on('end', () => setTimeout(() => setIsDragging(false), 50))
           )
 
-          // Pulsing ring (like regular hotspots)
+          // Pulsing ring
           group.append('circle')
             .attr('r', 8)
             .attr('fill', 'none')
-            .attr('stroke', severity === 'high' ? '#ff3333' : severity === 'elevated' ? '#ffcc00' : '#00ff88')
+            .attr('stroke', markerColor)
             .attr('stroke-width', 2)
             .attr('opacity', 0.8)
-            .attr('class', severity === 'high' ? 'hotspot-pulse' : '')
+            .attr('class', isHotspot ? 'hotspot-pulse' : '')
 
-          // Inner dot (like regular hotspots)
+          // Inner dot
           group.append('circle')
             .attr('r', 3)
-            .attr('fill', severity === 'high' ? '#ff3333' : severity === 'elevated' ? '#ffcc00' : '#00ff88')
+            .attr('fill', markerColor)
 
           // Label
           group.append('text')
             .attr('x', 12)
             .attr('y', 4)
-            .attr('fill', severity === 'high' ? '#ff3333' : severity === 'elevated' ? '#ffcc00' : '#00ff88')
+            .attr('fill', markerColor)
             .attr('font-size', '10px')
             .attr('font-weight', '600')
             .text(intel.name)
@@ -1164,9 +1206,9 @@ const GlobalMap = () => {
       </div>
       <div className="map-labels">
         <div className="map-label bottom-left">
-          <span className="legend-item"><span className="legend-dot high"></span>{t('map.high')}</span>
-          <span className="legend-item"><span className="legend-dot elevated"></span>{t('map.elevated')}</span>
-          <span className="legend-item"><span className="legend-dot medium"></span>{t('map.medium')}</span>
+          <span className="legend-item"><span className="legend-dot hotspot"></span>{t('map.high')}</span>
+          <span className="legend-item"><span className="legend-dot active"></span>{t('map.medium')}</span>
+          <span className="legend-item"><span className="legend-dot inactive"></span>{t('map.noIntel')}</span>
         </div>
         <div className="map-label bottom-right">
           <div>{new Date().toISOString().slice(0, 16).replace('T', ' ')}Z</div>
