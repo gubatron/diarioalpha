@@ -1,5 +1,5 @@
-import { BaseFeedService } from '@services/baseFeedService.js'
-import { FEED_CONFIG } from '@services/feedConfig.js'
+import { BaseFeedService } from '../news/baseFeedService.js'
+import { FEED_CONFIG } from '../news/feedConfig.js'
 
 /**
  * Service for fetching layoffs news
