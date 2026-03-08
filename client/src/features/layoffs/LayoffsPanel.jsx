@@ -2,7 +2,7 @@ import { LayoffsFeedService } from './layoffsFeedService'
 import { useI18n } from '@context/I18nContext'
 import { useFeedData } from '@hooks/useFeedData'
 import { getTimeAgo } from '@utils'
-import { formatCount } from '@services/chainStats'
+import { formatCount } from '@features/developer-activity/chainStats'
 import './LayoffsPanel.css'
 
 // Real recent major layoffs (2025/2026)
