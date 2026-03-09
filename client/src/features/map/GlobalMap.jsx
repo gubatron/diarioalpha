@@ -40,9 +40,28 @@ const GlobalMap = () => {
   const [selectedHotspot, setSelectedHotspot] = useState(null)
   const [newsLoading, setNewsLoading] = useState(false)
   const isDraggingRef = useRef(false) // Ref so D3 closures always read the latest value
+  const zoomRef = useRef(null) // Store D3 zoom behavior to avoid re-initialization
+  const prevZoomLevelRef = useRef(1) // Track previous zoom level to detect mode transitions
 
   // Use dynamic regions hook
   const { hotspots, intelHotspots, usHotspots, conflictZones, lastUpdated } = useDynamicRegions()
+
+  // Handle projection mode changes - reset appropriate state
+  const handleProjectionModeChange = (mode) => {
+    setProjectionMode(mode)
+    if (mode === 'flat') {
+      // Reset rotation when switching to flat mode
+      setRotation([0, 0])
+      // Reset zoom and center the map in flat mode
+      setZoomLevel(1)
+      setTranslation([0, 0])
+      // Disable auto-rotation in flat mode
+      setIsAutoRotating(false)
+    } else {
+      // Reset translation when switching back to 3D mode
+      setTranslation([0, 0])
+    }
+  }
 
   // Calculate quick stats
   const activeConflicts = conflictZones ? conflictZones.length : 0
@@ -53,6 +72,8 @@ const GlobalMap = () => {
   const [zoomLevel, setZoomLevel] = useState(1)
   const [translation, setTranslation] = useState([0, 0])
   const [rotation, setRotation] = useState([0, 0]) // [longitude, latitude] rotation for globe
+  const [projectionMode, setProjectionMode] = useState('3d') // '3d' or 'flat'
+  const MAX_ZOOM = 3.5 // Prevent zooming too close into the globe
 
   // Auto-rotation state
   const [isAutoRotating, setIsAutoRotating] = useState(true)
@@ -86,7 +107,7 @@ const GlobalMap = () => {
 
   // Auto-rotation effect - slow ambient spin when idle
   useEffect(() => {
-    if (!isAutoRotating || isUserInteracting || mapView !== 'global' || zoomLevel > 2) {
+    if (!isAutoRotating || isUserInteracting || mapView !== 'global' || zoomLevel > MAX_ZOOM) {
       return
     }
 
@@ -182,16 +203,16 @@ const GlobalMap = () => {
       let projection
       const minDimension = Math.min(width, height)
       if (mapView === 'global') {
-        // Dynamic projection based on zoom level
-        if (zoomLevel <= 2) {
-          // Use orthographic projection for spherical globe appearance when zoomed out
+        // Use projection based on manual mode selection
+        if (projectionMode === '3d') {
+          // Orthographic projection for spherical globe appearance
           projection = d3.geoOrthographic()
             .scale((minDimension / 2.2) * zoomLevel)
             .translate([width / 2, height / 2])
             .center([0, 0])
             .rotate(rotation)
         } else {
-          // Use natural earth projection for flatter appearance when zoomed in
+          // Natural earth projection for flat view
           projection = d3.geoNaturalEarth1()
             .scale((width / (2 * Math.PI)) * zoomLevel)
             .translate([width / 2 + translation[0], height / 2 + translation[1]])
@@ -205,9 +226,9 @@ const GlobalMap = () => {
 
       const path = d3.geoPath().projection(projection)
 
-      // Helper: check if a point is on the visible side of the globe
+      // Helper: check if a point is on the visible side of the globe (only for 3D mode)
       const isMarkerVisible = (lon, lat) => {
-        if (mapView !== 'global' || zoomLevel > 2) return true
+        if (mapView !== 'global' || projectionMode === 'flat') return true
         const center = [-rotation[0], -rotation[1]]
         return d3.geoDistance([lon, lat], center) < Math.PI / 2
       }
@@ -217,7 +238,7 @@ const GlobalMap = () => {
         .attr('width', width)
         .attr('height', height)
         .attr('fill', 'var(--map-bg)')
-        .style('pointer-events', 'none')
+        .style('pointer-events', 'all')
 
       if (mapView === 'global') {
         // Grid pattern for global
@@ -256,8 +277,8 @@ const GlobalMap = () => {
           .attr('stop-color', '#0d1219')
           .attr('stop-opacity', 1)
 
-        // Render sphere base (Ocean) with glow - this will be the drag surface
-        if (zoomLevel <= 2) {
+        // Render sphere base (Ocean) with glow - only in 3D mode
+        if (projectionMode === '3d') {
           const sphere = svg.append('path')
             .datum({ type: 'Sphere' })
             .attr('d', path)
@@ -270,20 +291,26 @@ const GlobalMap = () => {
             .style('pointer-events', 'all')
 
           // Attach drag behavior to sphere
+          let dragStartRotation = null
+
           const drag = d3.drag()
+            .clickDistance(5) // Ignore drags smaller than 5 pixels (treats them as clicks)
             .on('start', function (event) {
               event.sourceEvent.stopPropagation()
               isDraggingRef.current = false
+              // Store initial rotation at drag start
+              dragStartRotation = [...rotationRef.current]
               d3.select(this).style('cursor', 'grabbing')
             })
             .on('drag', function (event) {
               event.sourceEvent.stopPropagation()
               isDraggingRef.current = true
-              const sensitivity = 0.5
-              const currentRotation = rotationRef.current
+              // Scale sensitivity based on zoom level - higher zoom = lower sensitivity for finer control
+              const sensitivity = 0.5 / zoomLevel
+              if (!dragStartRotation) return
               const newRotation = [
-                currentRotation[0] + event.dx * sensitivity,
-                Math.max(-90, Math.min(90, currentRotation[1] - event.dy * sensitivity))
+                dragStartRotation[0] + event.dx * sensitivity,
+                Math.max(-90, Math.min(90, dragStartRotation[1] - event.dy * sensitivity))
               ]
               rotationRef.current = newRotation
               setRotation(newRotation)
@@ -291,6 +318,7 @@ const GlobalMap = () => {
             .on('end', function (event) {
               event.sourceEvent.stopPropagation()
               d3.select(this).style('cursor', 'grab')
+              dragStartRotation = null
               setTimeout(() => isDraggingRef.current = false, 50)
             })
 
@@ -325,6 +353,7 @@ const GlobalMap = () => {
           .attr('height', height)
           .attr('fill', 'url(#grid)')
           .attr('opacity', 0.3)
+          .style('pointer-events', 'none')
 
         // Graticule (lat/lon lines)
         const graticule = d3.geoGraticule().step([30, 30])
@@ -335,6 +364,7 @@ const GlobalMap = () => {
           .attr('stroke', 'var(--map-grid)')
           .attr('stroke-width', 0.5)
           .attr('opacity', 0.5)
+          .style('pointer-events', 'none')
 
         // Render countries
         const countries = topojson.feature(worldData, worldData.objects.countries)
@@ -1073,27 +1103,77 @@ const GlobalMap = () => {
         })
       }
 
-      // Add pan/zoom for flat map view
-      if (mapView !== 'global' || zoomLevel > 2) {
-        const zoom = d3.zoom()
-          .scaleExtent([1, 8])
-          .on('zoom', (event) => {
-            const newScale = event.transform.k
-            const newTranslation = [event.transform.x, event.transform.y]
-            setZoomLevel(newScale)
-            setTranslation(newTranslation)
-          })
+      // Add pan/zoom for flat mode or US view
+      const isFlatMode = mapView !== 'global' || projectionMode === 'flat'
+      const wasFlatMode = prevZoomLevelRef.current === -1 || mapView !== 'global' || prevZoomLevelRef.current < 0 // -1 means flat mode
+      
+      if (isFlatMode) {
+        // Flat mode (US view or manual flat projection)
+        // Initialize zoom behavior once
+        if (!zoomRef.current) {
+          zoomRef.current = d3.zoom()
+            .scaleExtent([1, MAX_ZOOM])
+            .clickDistance(2)
+            .filter((event) => {
+              // For wheel events
+              if (event.type === 'wheel') {
+                if (!event.button) return false
+                // Prevent zooming beyond limits
+                if (event.deltaY < 0 && zoomLevel >= MAX_ZOOM) return false // Zooming in at max
+                if (event.deltaY > 0 && zoomLevel <= 1) return false // Zooming out at min
+                return true
+              }
+              // For mouse drag, allow only on background/countries (not on interactive markers)
+              const target = event.target
+              if (event.button) return false
+              // Check if clicking on an interactive marker
+              if (target.closest('.hotspot, .intel-hotspot, .us-city, .conflict-zone, .military-base, .nuclear-facility, .cyber-region, .chokepoint')) {
+                return false
+              }
+              // Allow drag on background rect, svg, or country/state paths
+              return target.tagName === 'rect' || target.tagName === 'svg' || target.tagName === 'path'
+            })
+            .on('zoom', (event) => {
+              // Clamp the scale to prevent going beyond limits
+              const clampedScale = Math.max(1, Math.min(MAX_ZOOM, event.transform.k))
+              const newTranslation = [event.transform.x, event.transform.y]
+              setZoomLevel(clampedScale)
+              setTranslation(newTranslation)
+            })
+          
+          // Apply zoom behavior only once when first created
+          svg.call(zoomRef.current)
+        }
+        
+        // Set initial transform when switching to flat mode
+        if (prevZoomLevelRef.current >= 0 && isFlatMode) {
+          const currentTransform = d3.zoomIdentity.translate(translation[0], translation[1]).scale(zoomLevel)
+          svg.call(zoomRef.current.transform, currentTransform)
+        }
+        
+        // Disable custom wheel handler when D3 zoom is active
+        svg.on('wheel.mapZoom', null)
+      } else {
+        // 3D Globe mode - disable D3 zoom
+        svg.on('.zoom', null)
+        
+        // Reset D3 zoom transform when switching back to 3D mode
+        if (zoomRef.current && isFlatMode) {
+          svg.call(zoomRef.current.transform, d3.zoomIdentity)
+        }
 
-        svg.call(zoom)
+        // Custom wheel handler for globe zoom
+        svg.on('wheel.mapZoom', function (event) {
+          event.preventDefault()
+          event.stopPropagation()
+          const delta = event.deltaY > 0 ? 0.9 : 1.1
+          const newZoom = Math.max(1, Math.min(MAX_ZOOM, zoomLevel * delta))
+          setZoomLevel(newZoom)
+        })
       }
-
-      // Always allow zooming via scroll
-      svg.on('wheel.zoom', function (event) {
-        event.preventDefault()
-        const delta = event.deltaY > 0 ? 0.9 : 1.1
-        const newZoom = Math.max(1, Math.min(8, zoomLevel * delta))
-        setZoomLevel(newZoom)
-      })
+      
+      // Track mode for transition detection (-1 = flat mode, >= 0 = 3d mode with zoom level)
+      prevZoomLevelRef.current = isFlatMode ? -1 : zoomLevel
     } catch (error) {
       console.error('Error rendering map:', error)
       setError(`${t('map.failedRender')}: ${error.message}`)
@@ -1101,7 +1181,7 @@ const GlobalMap = () => {
   }
 
   const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev * 1.2, 8))
+    setZoomLevel(prev => Math.min(prev * 1.2, MAX_ZOOM))
   }
 
   const handleZoomOut = () => {
@@ -1223,8 +1303,25 @@ const GlobalMap = () => {
           <span className="stat-value text-base font-bold font-[family-name:var(--font-mono)] text-accent">{totalIntel > 0 ? totalIntel : '—'}</span>
         </div>
         <div className="w-px h-[30px] bg-border-main"></div>
+        <div className="flex flex-row items-center gap-1">
+          <button
+            className={`py-1.5 px-3 bg-transparent border border-border-main text-text-secondary text-[0.65rem] font-semibold tracking-[0.05em] cursor-pointer transition-all duration-200 hover:border-accent hover:text-accent ${projectionMode === '3d' ? '!bg-accent !border-accent !text-bg-dark' : ''}`}
+            onClick={() => handleProjectionModeChange('3d')}
+            title={t('map.globeView')}
+          >
+            3D
+          </button>
+          <button
+            className={`py-1.5 px-3 bg-transparent border border-border-main text-text-secondary text-[0.65rem] font-semibold tracking-[0.05em] cursor-pointer transition-all duration-200 hover:border-accent hover:text-accent ${projectionMode === 'flat' ? '!bg-accent !border-accent !text-bg-dark' : ''}`}
+            onClick={() => handleProjectionModeChange('flat')}
+            title={t('map.flatView')}
+          >
+            FLAT
+          </button>
+        </div>
+        <div className="w-px h-[30px] bg-border-main"></div>
         <div className="flex flex-col items-center gap-1">
-          <button 
+          <button
             className={`py-1.5 px-3 bg-transparent border border-border-main text-text-secondary text-[0.65rem] font-semibold tracking-[0.05em] cursor-pointer transition-all duration-200 hover:border-accent hover:text-accent ${isAutoRotating ? '!bg-accent !border-accent !text-bg-dark' : ''}`}
             onClick={() => setIsAutoRotating(!isAutoRotating)}
             title={isAutoRotating ? t('map.stopRotation') : t('map.startRotation')}
