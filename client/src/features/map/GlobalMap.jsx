@@ -24,7 +24,7 @@ const GlobalMap = () => {
   const [usData, setUsData] = useState(null)
   const [selectedHotspot, setSelectedHotspot] = useState(null)
   const [newsLoading, setNewsLoading] = useState(false)
-  const [isDragging, setIsDragging] = useState(false) // Track if user is dragging
+  const isDraggingRef = useRef(false) // Ref so D3 closures always read the latest value
 
   // Use dynamic regions hook
   const { hotspots, intelHotspots, usHotspots, conflictZones, lastUpdated } = useDynamicRegions()
@@ -258,12 +258,12 @@ const GlobalMap = () => {
           const drag = d3.drag()
             .on('start', function (event) {
               event.sourceEvent.stopPropagation()
-              setIsDragging(false)
+              isDraggingRef.current = false
               d3.select(this).style('cursor', 'grabbing')
             })
             .on('drag', function (event) {
               event.sourceEvent.stopPropagation()
-              setIsDragging(true)
+              isDraggingRef.current = true
               const sensitivity = 0.5
               const currentRotation = rotationRef.current
               const newRotation = [
@@ -276,7 +276,7 @@ const GlobalMap = () => {
             .on('end', function (event) {
               event.sourceEvent.stopPropagation()
               d3.select(this).style('cursor', 'grab')
-              setTimeout(() => setIsDragging(false), 50)
+              setTimeout(() => isDraggingRef.current = false, 50)
             })
 
           sphere.call(drag)
@@ -339,11 +339,11 @@ const GlobalMap = () => {
           .call(d3.drag()
             .on('start', function (event) {
               event.sourceEvent.stopPropagation()
-              setIsDragging(false)
+              isDraggingRef.current = false
             })
             .on('drag', function (event) {
               event.sourceEvent.stopPropagation()
-              setIsDragging(true)
+              isDraggingRef.current = true
               const sensitivity = 0.5
               const currentRotation = rotationRef.current
               const newRotation = [
@@ -355,7 +355,7 @@ const GlobalMap = () => {
             })
             .on('end', function (event) {
               event.sourceEvent.stopPropagation()
-              setTimeout(() => setIsDragging(false), 50)
+              setTimeout(() => isDraggingRef.current = false, 50)
             })
           )
       }
@@ -395,7 +395,7 @@ const GlobalMap = () => {
               .style('cursor', 'pointer')
 
             group.on('click', () => {
-              if (!isDragging) handleHotspotClick({
+              if (!isDraggingRef.current) handleHotspotClick({
                 ...city,
                 type: 'city',
                 severity: city.type === 'capital' ? 'high' : city.type === 'military' ? 'elevated' : 'medium'
@@ -403,10 +403,10 @@ const GlobalMap = () => {
             })
 
             group.call(d3.drag()
-              .on('start', () => setIsDragging(false))
+              .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
-                setIsDragging(true)
+                isDraggingRef.current = true
                 const sensitivity = 0.5
                 const currentRotation = rotationRef.current
                 const newRotation = [
@@ -416,7 +416,7 @@ const GlobalMap = () => {
                 rotationRef.current = newRotation
                 setRotation(newRotation)
               })
-              .on('end', () => setTimeout(() => setIsDragging(false), 50))
+              .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
             )
 
             group.append('circle')
@@ -452,14 +452,14 @@ const GlobalMap = () => {
             .style('cursor', 'pointer')
 
           group.on('click', () => {
-            if (!isDragging) handleHotspotClick(hotspot)
+            if (!isDraggingRef.current) handleHotspotClick(hotspot)
           })
 
           group.call(d3.drag()
-            .on('start', () => setIsDragging(false))
+            .on('start', () => isDraggingRef.current = false)
             .on('drag', (event) => {
               event.sourceEvent.stopPropagation()
-              setIsDragging(true)
+              isDraggingRef.current = true
               const sensitivity = 0.5
               const currentRotation = rotationRef.current
               const newRotation = [
@@ -469,7 +469,7 @@ const GlobalMap = () => {
               rotationRef.current = newRotation
               setRotation(newRotation)
             })
-            .on('end', () => setTimeout(() => setIsDragging(false), 50))
+            .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
           )
 
           // Pulsing ring
@@ -512,14 +512,14 @@ const GlobalMap = () => {
               .style('cursor', 'pointer')
 
             g.on('click', () => {
-              if (!isDragging) handleHotspotClick({ ...point, type: 'chokepoint' })
+              if (!isDraggingRef.current) handleHotspotClick({ ...point, type: 'chokepoint' })
             })
 
             g.call(d3.drag()
-              .on('start', () => setIsDragging(false))
+              .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
-                setIsDragging(true)
+                isDraggingRef.current = true
                 const sensitivity = 0.5
                 const currentRotation = rotationRef.current
                 const newRotation = [
@@ -529,7 +529,7 @@ const GlobalMap = () => {
                 rotationRef.current = newRotation
                 setRotation(newRotation)
               })
-              .on('end', () => setTimeout(() => setIsDragging(false), 50))
+              .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
             )
 
             g.append('rect')
@@ -558,14 +558,14 @@ const GlobalMap = () => {
               .style('cursor', 'pointer')
 
             g.on('click', () => {
-              if (!isDragging) handleHotspotClick({ ...zone, type: 'conflict' })
+              if (!isDraggingRef.current) handleHotspotClick({ ...zone, type: 'conflict' })
             })
 
             g.call(d3.drag()
-              .on('start', () => setIsDragging(false))
+              .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
-                setIsDragging(true)
+                isDraggingRef.current = true
                 const sensitivity = 0.5
                 const currentRotation = rotationRef.current
                 const newRotation = [
@@ -575,7 +575,7 @@ const GlobalMap = () => {
                 rotationRef.current = newRotation
                 setRotation(newRotation)
               })
-              .on('end', () => setTimeout(() => setIsDragging(false), 50))
+              .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
             )
 
             g.append('circle')
@@ -606,14 +606,14 @@ const GlobalMap = () => {
               .style('cursor', 'pointer')
 
             g.on('click', () => {
-              if (!isDragging) handleHotspotClick({ ...base, type: 'base' })
+              if (!isDraggingRef.current) handleHotspotClick({ ...base, type: 'base' })
             })
 
             g.call(d3.drag()
-              .on('start', () => setIsDragging(false))
+              .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
-                setIsDragging(true)
+                isDraggingRef.current = true
                 const sensitivity = 0.5
                 const currentRotation = rotationRef.current
                 const newRotation = [
@@ -623,7 +623,7 @@ const GlobalMap = () => {
                 rotationRef.current = newRotation
                 setRotation(newRotation)
               })
-              .on('end', () => setTimeout(() => setIsDragging(false), 50))
+              .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
             )
 
             g.append('circle')
@@ -646,14 +646,14 @@ const GlobalMap = () => {
               .style('cursor', 'pointer')
 
             g.on('click', () => {
-              if (!isDragging) handleHotspotClick({ ...nuc, type: 'nuclear' })
+              if (!isDraggingRef.current) handleHotspotClick({ ...nuc, type: 'nuclear' })
             })
 
             g.call(d3.drag()
-              .on('start', () => setIsDragging(false))
+              .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
-                setIsDragging(true)
+                isDraggingRef.current = true
                 const sensitivity = 0.5
                 const currentRotation = rotationRef.current
                 const newRotation = [
@@ -663,7 +663,7 @@ const GlobalMap = () => {
                 rotationRef.current = newRotation
                 setRotation(newRotation)
               })
-              .on('end', () => setTimeout(() => setIsDragging(false), 50))
+              .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
             )
 
             g.append('circle').attr('r', 4).attr('fill', '#ffff00').attr('stroke', '#000')
@@ -716,14 +716,14 @@ const GlobalMap = () => {
               .style('cursor', 'pointer')
 
             g.on('click', () => {
-              if (!isDragging) handleHotspotClick({ ...reg, type: 'cyber' })
+              if (!isDraggingRef.current) handleHotspotClick({ ...reg, type: 'cyber' })
             })
 
             g.call(d3.drag()
-              .on('start', () => setIsDragging(false))
+              .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
-                setIsDragging(true)
+                isDraggingRef.current = true
                 const sensitivity = 0.5
                 const currentRotation = rotationRef.current
                 const newRotation = [
@@ -733,7 +733,7 @@ const GlobalMap = () => {
                 rotationRef.current = newRotation
                 setRotation(newRotation)
               })
-              .on('end', () => setTimeout(() => setIsDragging(false), 50))
+              .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
             )
 
             g.append('rect')
@@ -759,24 +759,107 @@ const GlobalMap = () => {
       if (layerVisibility.intelHotspots) {
         const intelGroup = svg.append('g').attr('class', 'intel-hotspots')
 
-        // Create hover tooltip group (hidden by default)
+        // Track current hovered intel for tooltip click
+        let currentHoveredIntel = null
+        let hideTimer = null
+
+        // Create hover tooltip group (hidden by default) - square container matching sidebar style
         const tooltip = svg.append('g')
           .attr('class', 'marker-tooltip')
           .style('pointer-events', 'none')
           .style('display', 'none')
+          .style('cursor', 'pointer')
+          .on('mouseenter', function() {
+            // Cancel any pending hide so tooltip stays visible
+            if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+          })
+          .on('mouseleave', function() {
+            // Hide tooltip when mouse leaves the tooltip area
+            if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+            tooltip.style('display', 'none')
+            currentHoveredIntel = null
+          })
 
+        // Tooltip background (square container) - clickable
         tooltip.append('rect')
           .attr('class', 'tooltip-bg')
           .attr('rx', 4)
           .attr('ry', 4)
+          .style('pointer-events', 'all')
 
+        // Area name header
         tooltip.append('text')
+          .attr('class', 'tooltip-header')
+          .attr('x', 12)
+          .attr('y', 20)
+          .attr('fill', '#00ff88')
+          .attr('font-size', '12px')
+          .attr('font-weight', '700')
+          .attr('text-transform', 'uppercase')
+          .attr('letter-spacing', '1px')
+
+        // Divider line between header and content
+        tooltip.append('line')
+          .attr('class', 'tooltip-divider')
+          .attr('x1', 12)
+          .attr('y1', 28)
+          .attr('x2', 188)
+          .attr('y2', 28)
+          .attr('stroke', 'rgba(0, 255, 136, 0.3)')
+          .attr('stroke-width', 1)
+          .style('display', 'none')
+
+        // Loading spinner group (hidden by default) - centered in content area
+        const spinnerGroup = tooltip.append('g')
+          .attr('class', 'tooltip-spinner')
+          .style('display', 'none')
+
+        spinnerGroup.append('circle')
+          .attr('class', 'spinner-circle')
+          .attr('cx', 100)
+          .attr('cy', 50)
+          .attr('r', 12)
+          .attr('fill', 'none')
+          .attr('stroke', '#00ff88')
+          .attr('stroke-width', 2)
+          .attr('stroke-dasharray', '20 40')
+
+        // Article title text - using tspan for wrapping
+        const textGroup = tooltip.append('g')
+          .attr('class', 'tooltip-text-group')
+          .attr('transform', `translate(12, 42)`)
+
+        textGroup.append('text')
           .attr('class', 'tooltip-text')
-          .attr('x', 8)
-          .attr('y', 14)
+          .attr('x', 0)
+          .attr('y', 0)
           .attr('fill', '#e2e8f0')
           .attr('font-size', '10px')
           .attr('font-weight', '500')
+          .attr('max-width', '176')
+
+        // Show More button background
+        tooltip.append('rect')
+          .attr('class', 'tooltip-show-more-bg')
+          .attr('rx', 2)
+          .attr('ry', 2)
+          .attr('fill', 'rgba(0, 255, 136, 0.2)')
+          .attr('stroke', '#00ff88')
+          .attr('stroke-width', 1)
+          .style('display', 'none')
+          .style('cursor', 'pointer')
+          .style('pointer-events', 'all')
+
+        // Show More button text
+        tooltip.append('text')
+          .attr('class', 'tooltip-show-more-text')
+          .attr('fill', '#00ff88')
+          .attr('font-size', '9px')
+          .attr('font-weight', '700')
+          .attr('text-anchor', 'middle')
+          .style('display', 'none')
+          .style('pointer-events', 'none')
+          .text('SHOW MORE')
 
         intelHotspots.forEach(intel => {
           // Skip DC in US view since it's already rendered as a city
@@ -787,57 +870,166 @@ const GlobalMap = () => {
           if (!projected) return
           const [x, y] = projected
 
-          // Determine marker color based on news status
+          // Determine marker color - all intel markers are green
           const hasNews = intel.matchCount && intel.matchCount > 0
           const isHotspot = hasNews && (intel.severity === 'high' || intel.severity === 'critical')
-          let markerColor = '#888888' // grey - no news
-          if (isHotspot) {
-            markerColor = '#ff3333' // red - hotspot
-          } else if (hasNews) {
-            markerColor = '#00ff88' // green - has news
-          }
+          let markerColor = '#00ff88' // green for all intel markers
 
           const group = intelGroup.append('g')
             .attr('class', `intel-hotspot ${isHotspot ? 'hotspot' : hasNews ? 'active' : 'inactive'}`)
             .attr('transform', `translate(${x},${y})`)
             .style('cursor', 'pointer')
 
-          group.on('click', () => {
-            if (!isDragging) handleIntelHotspotClick({ ...intel, severity: intel.severity || 'medium' })
+          // Remove marker click - only hover interaction
+          group.style('cursor', 'pointer')
+
+          // First mouseleave handler removed — debounced handler below handles this
+
+          // Show More button click handler
+          tooltip.select('.tooltip-show-more-bg').on('click', function(event) {
+            event.stopPropagation()
+            if (!isDraggingRef.current && currentHoveredIntel) {
+              tooltip.style('display', 'none')
+              handleIntelHotspotClick({ ...currentHoveredIntel, severity: currentHoveredIntel.severity || 'medium' })
+            }
           })
 
-          // Hover tooltip: show most recent story
-          group.on('mouseenter', function () {
-            const recentArticle = intel.matchedArticles && intel.matchedArticles.length > 0
-              ? intel.matchedArticles[0]
-              : null
-            const tooltipLabel = recentArticle && recentArticle.title
-              ? recentArticle.title.substring(0, 60) + (recentArticle.title.length > 60 ? '...' : '')
-              : intel.name + (intel.subtext ? ' - ' + intel.subtext : '')
-
-            tooltip.select('.tooltip-text').text(tooltipLabel)
-            const textNode = tooltip.select('.tooltip-text').node()
-            const textWidth = textNode ? textNode.getComputedTextLength() : 100
+          // Hover tooltip: fetch and show most recent story with area name header
+          group.on('mouseenter', async function () {
+            // Store current intel for tooltip click
+            currentHoveredIntel = intel
+            
+            // Show loading state immediately with area name
+            tooltip.select('.tooltip-header').text(intel.name)
+            tooltip.select('.tooltip-divider').style('display', 'none')
+            tooltip.select('.tooltip-spinner').style('display', null)
+            tooltip.select('.tooltip-show-more-bg').style('display', 'none')
+            tooltip.select('.tooltip-show-more-text').style('display', 'none')
+            
+            const textElem = tooltip.select('.tooltip-text')
+            textElem.text('Fetching news...')
+            
             tooltip.select('.tooltip-bg')
-              .attr('width', textWidth + 16)
-              .attr('height', 22)
-              .attr('fill', 'rgba(10, 14, 20, 0.95)')
+              .attr('width', 200)
+              .attr('height', 80)
+              .attr('fill', 'rgba(10, 14, 20, 0.98)')
               .attr('stroke', markerColor)
               .attr('stroke-width', 1)
-
-            tooltip.attr('transform', `translate(${x + 14},${y - 24})`)
+            tooltip.attr('transform', `translate(${x - 100},${y - 92})`)
             tooltip.style('display', null)
+            tooltip.style('pointer-events', 'all')
+
+            // Start spinner animation
+            const spinner = tooltip.select('.spinner-circle')
+            let rotation = 0
+            const spinInterval = setInterval(() => {
+              rotation = (rotation + 15) % 360
+              spinner.attr('transform', `rotate(${rotation} 100 50)`)
+            }, 50)
+
+            try {
+              // Fetch fresh news for this intel hotspot
+              const newsItems = await MapFeedService.fetchNewsForHotspot(intel)
+              clearInterval(spinInterval)
+
+              const recentArticle = newsItems && newsItems.length > 0
+                ? newsItems[0]
+                : null
+
+              if (recentArticle && recentArticle.title) {
+                // Show full article title, dynamically size the container
+                const fullTitle = recentArticle.title
+                const textElem = tooltip.select('.tooltip-text')
+                
+                // Word wrap the text manually using tspan
+                const words = fullTitle.split(' ')
+                const maxWidth = 176
+                const lineHeight = 14
+                const charWidth = 6 // approx width per character for 10px font
+                let lines = []
+                let currentLine = ''
+                
+                words.forEach(word => {
+                  const testLine = currentLine ? currentLine + ' ' + word : word
+                  const testWidth = testLine.length * charWidth
+                  if (testWidth <= maxWidth) {
+                    currentLine = testLine
+                  } else {
+                    if (currentLine) lines.push(currentLine)
+                    currentLine = word
+                  }
+                })
+                if (currentLine) lines.push(currentLine)
+                
+                // Remove all existing tspan children and add new ones
+                textElem.selectAll('tspan').remove()
+                lines.forEach((line, i) => {
+                  textElem.append('tspan')
+                    .attr('x', 0)
+                    .attr('dy', i === 0 ? 10 : lineHeight)
+                    .text(line)
+                })
+                
+                tooltip.select('.tooltip-divider').style('display', null)
+
+                // Calculate dynamic height based on content
+                const contentHeight = Math.max(20, lines.length * lineHeight)
+                const buttonHeight = 24
+                const totalHeight = 42 + contentHeight + 8 + buttonHeight + 8 // header + content + padding + button + padding
+
+                tooltip.select('.tooltip-bg').attr('height', totalHeight)
+                
+                // Position and show Show More button
+                const buttonWidth = 80
+                const buttonX = 100 - (buttonWidth / 2)
+                const buttonY = 42 + contentHeight + 16
+                
+                tooltip.select('.tooltip-show-more-bg')
+                  .attr('x', buttonX)
+                  .attr('y', buttonY)
+                  .attr('width', buttonWidth)
+                  .attr('height', buttonHeight)
+                  .style('display', null)
+                  
+                tooltip.select('.tooltip-show-more-text')
+                  .attr('x', 100)
+                  .attr('y', buttonY + 15)
+                  .style('display', null)
+                  
+                tooltip.select('.tooltip-spinner').style('display', 'none')
+              } else {
+                // No news available
+                const textElem = tooltip.select('.tooltip-text')
+                textElem.text('No news for this area')
+                tooltip.select('.tooltip-divider').style('display', null)
+                tooltip.select('.tooltip-bg').attr('height', 60)
+                tooltip.select('.tooltip-spinner').style('display', 'none')
+              }
+            } catch (e) {
+              clearInterval(spinInterval)
+              console.error('Error fetching news for intel hotspot:', e)
+              const textElem = tooltip.select('.tooltip-text')
+              textElem.text('Error loading news')
+              tooltip.select('.tooltip-divider').style('display', null)
+              tooltip.select('.tooltip-bg').attr('height', 60)
+              tooltip.select('.tooltip-spinner').style('display', 'none')
+            }
           })
 
           group.on('mouseleave', function () {
-            tooltip.style('display', 'none')
+            // Delay hide to give mouse time to reach the tooltip without flickering
+            hideTimer = setTimeout(() => {
+              tooltip.style('display', 'none')
+              currentHoveredIntel = null
+              hideTimer = null
+            }, 150)
           })
 
           group.call(d3.drag()
-            .on('start', () => setIsDragging(false))
+            .on('start', () => isDraggingRef.current = false)
             .on('drag', (event) => {
               event.sourceEvent.stopPropagation()
-              setIsDragging(true)
+              isDraggingRef.current = true
               const sensitivity = 0.5
               const currentRotation = rotationRef.current
               const newRotation = [
@@ -847,7 +1039,7 @@ const GlobalMap = () => {
               rotationRef.current = newRotation
               setRotation(newRotation)
             })
-            .on('end', () => setTimeout(() => setIsDragging(false), 50))
+            .on('end', () => setTimeout(() => isDraggingRef.current = false, 50))
           )
 
           // Pulsing ring
