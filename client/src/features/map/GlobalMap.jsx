@@ -296,15 +296,12 @@ const GlobalMap = () => {
             .style('pointer-events', 'all')
 
           // Attach drag behavior to sphere
-          let dragStartRotation = null
-
           const drag = d3.drag()
+            .container(function () { return svgRef.current })
             .clickDistance(5) // Ignore drags smaller than 5 pixels (treats them as clicks)
             .on('start', function (event) {
               event.sourceEvent.stopPropagation()
               isDraggingRef.current = false
-              // Store initial rotation at drag start
-              dragStartRotation = [...rotationRef.current]
               d3.select(this).style('cursor', 'grabbing')
             })
             .on('drag', function (event) {
@@ -312,10 +309,10 @@ const GlobalMap = () => {
               isDraggingRef.current = true
               // Scale sensitivity based on zoom level - higher zoom = lower sensitivity for finer control
               const sensitivity = 0.5 / zoomLevel
-              if (!dragStartRotation) return
+              const currentRotation = rotationRef.current
               const newRotation = [
-                dragStartRotation[0] + event.dx * sensitivity,
-                Math.max(-90, Math.min(90, dragStartRotation[1] - event.dy * sensitivity))
+                currentRotation[0] + event.dx * sensitivity,
+                Math.max(-90, Math.min(90, currentRotation[1] - event.dy * sensitivity))
               ]
               rotationRef.current = newRotation
               setRotation(newRotation)
@@ -323,7 +320,6 @@ const GlobalMap = () => {
             .on('end', function (event) {
               event.sourceEvent.stopPropagation()
               d3.select(this).style('cursor', 'grab')
-              dragStartRotation = null
               setTimeout(() => isDraggingRef.current = false, 50)
             })
 
@@ -387,6 +383,7 @@ const GlobalMap = () => {
           .attr('stroke-width', 0.5)
           .style('pointer-events', 'visiblePainted')
           .call(d3.drag()
+            .container(function () { return svgRef.current })
             .on('start', function (event) {
               event.sourceEvent.stopPropagation()
               isDraggingRef.current = false
@@ -394,7 +391,7 @@ const GlobalMap = () => {
             .on('drag', function (event) {
               event.sourceEvent.stopPropagation()
               isDraggingRef.current = true
-              const sensitivity = 0.5
+              const sensitivity = 0.5 / zoomLevel
               const currentRotation = rotationRef.current
               const newRotation = [
                 currentRotation[0] + event.dx * sensitivity,
@@ -453,11 +450,12 @@ const GlobalMap = () => {
             })
 
             group.call(d3.drag()
+              .container(function () { return svgRef.current })
               .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
                 isDraggingRef.current = true
-                const sensitivity = 0.5
+                const sensitivity = 0.5 / zoomLevel
                 const currentRotation = rotationRef.current
                 const newRotation = [
                   currentRotation[0] + event.dx * sensitivity,
@@ -507,11 +505,12 @@ const GlobalMap = () => {
           })
 
           group.call(d3.drag()
+            .container(function () { return svgRef.current })
             .on('start', () => isDraggingRef.current = false)
             .on('drag', (event) => {
               event.sourceEvent.stopPropagation()
               isDraggingRef.current = true
-              const sensitivity = 0.5
+              const sensitivity = 0.5 / zoomLevel
               const currentRotation = rotationRef.current
               const newRotation = [
                 currentRotation[0] + event.dx * sensitivity,
@@ -567,11 +566,12 @@ const GlobalMap = () => {
             })
 
             g.call(d3.drag()
+              .container(function () { return svgRef.current })
               .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
                 isDraggingRef.current = true
-                const sensitivity = 0.5
+                const sensitivity = 0.5 / zoomLevel
                 const currentRotation = rotationRef.current
                 const newRotation = [
                   currentRotation[0] + event.dx * sensitivity,
@@ -613,11 +613,12 @@ const GlobalMap = () => {
             })
 
             g.call(d3.drag()
+              .container(function () { return svgRef.current })
               .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
                 isDraggingRef.current = true
-                const sensitivity = 0.5
+                const sensitivity = 0.5 / zoomLevel
                 const currentRotation = rotationRef.current
                 const newRotation = [
                   currentRotation[0] + event.dx * sensitivity,
@@ -661,11 +662,12 @@ const GlobalMap = () => {
             })
 
             g.call(d3.drag()
+              .container(function () { return svgRef.current })
               .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
                 isDraggingRef.current = true
-                const sensitivity = 0.5
+                const sensitivity = 0.5 / zoomLevel
                 const currentRotation = rotationRef.current
                 const newRotation = [
                   currentRotation[0] + event.dx * sensitivity,
@@ -701,11 +703,12 @@ const GlobalMap = () => {
             })
 
             g.call(d3.drag()
+              .container(function () { return svgRef.current })
               .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
                 isDraggingRef.current = true
-                const sensitivity = 0.5
+                const sensitivity = 0.5 / zoomLevel
                 const currentRotation = rotationRef.current
                 const newRotation = [
                   currentRotation[0] + event.dx * sensitivity,
@@ -771,11 +774,12 @@ const GlobalMap = () => {
             })
 
             g.call(d3.drag()
+              .container(function () { return svgRef.current })
               .on('start', () => isDraggingRef.current = false)
               .on('drag', (event) => {
                 event.sourceEvent.stopPropagation()
                 isDraggingRef.current = true
-                const sensitivity = 0.5
+                const sensitivity = 0.5 / zoomLevel
                 const currentRotation = rotationRef.current
                 const newRotation = [
                   currentRotation[0] + event.dx * sensitivity,
@@ -1067,11 +1071,12 @@ const GlobalMap = () => {
           })
 
           group.call(d3.drag()
+            .container(function () { return svgRef.current })
             .on('start', () => isDraggingRef.current = false)
             .on('drag', (event) => {
               event.sourceEvent.stopPropagation()
               isDraggingRef.current = true
-              const sensitivity = 0.5
+              const sensitivity = 0.5 / zoomLevel
               const currentRotation = rotationRef.current
               const newRotation = [
                 currentRotation[0] + event.dx * sensitivity,
