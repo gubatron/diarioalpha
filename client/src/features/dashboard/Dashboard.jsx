@@ -14,8 +14,6 @@ import CategoryTabs from './CategoryTabs'
 import TickerStrip from '@features/markets/TickerStrip'
 import { useI18n } from '@context/I18nContext'
 
-import './Dashboard.css'
-
 // Hero panels are featured at the top with larger size
 const HERO_PANELS = ['politics', 'blockchain']
 
@@ -103,7 +101,7 @@ const Dashboard = ({ panelSettings, currentMode }) => {
         return <LayoffsPanel />
       default:
         return (
-          <div className="panel-placeholder">
+          <div className="p-4 text-center text-text-dim text-sm">
             {t('panel.comingSoon', { name: t(PANELS[panelId]?.nameKey) })}
           </div>
         )
@@ -111,20 +109,20 @@ const Dashboard = ({ panelSettings, currentMode }) => {
   }
 
   return (
-    <main className="dashboard">
+    <main className="flex-1 flex flex-col overflow-hidden bg-bg-dark">
       {/* Ticker strip for markets and sectors */}
-      <div className="ticker-section">
+      <div className="w-full shrink-0">
         <ErrorBoundary>
           <TickerStrip />
         </ErrorBoundary>
       </div>
 
       {/* Main scrollable content */}
-      <div className="dashboard-content">
+      <div className="flex-1 overflow-y-auto px-6 pb-6 max-[1400px]:px-4 max-[1400px]:pb-4 max-[1000px]:px-4 max-[1000px]:pb-4 max-[600px]:px-3 max-[600px]:pb-3">
         {/* Hero Section - Featured Panels */}
-        <section className="hero-section">
+        <section className="mb-6">
           {/* Featured Panels */}
-          <div className="hero-featured">
+          <div className="hero-featured grid grid-cols-2 gap-4 max-[600px]:grid-cols-1">
             {HERO_PANELS.map(panelId => (
               <Panel
                 key={panelId}
@@ -147,7 +145,7 @@ const Dashboard = ({ panelSettings, currentMode }) => {
         />
 
         {/* Filtered panels grid - 3 columns */}
-        <div className="news-grid">
+        <div className="news-grid grid grid-cols-3 gap-6 p-6 flex-1 overflow-y-auto content-start max-[1400px]:grid-cols-2 max-[1000px]:grid-cols-2 max-[1000px]:p-4 max-[1000px]:gap-3 max-[600px]:grid-cols-1 max-[600px]:p-3">
           {filteredPanels.map(panelId => {
             const config = PANELS[panelId]
             if (!config) return null
