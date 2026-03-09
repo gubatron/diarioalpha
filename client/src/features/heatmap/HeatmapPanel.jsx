@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '@context/I18nContext'
 import { formatPercent } from '@utils'
-import './HeatmapPanel.css'
 
 const SECTORS = [
   { symbol: 'XLK', name: 'Tech' },
@@ -69,11 +68,11 @@ const HeatmapPanel = () => {
   }
 
   if (loading) {
-    return <div className="loading-msg">{t('heatmap.loading')}</div>
+    return <div className="p-4 text-center text-text-dim text-[0.8rem]">{t('heatmap.loading')}</div>
   }
 
   return (
-    <div className="heatmap">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2">
       {SECTORS.map(sector => {
         const data = sectors[sector.symbol]
         if (!data) return null
@@ -81,10 +80,10 @@ const HeatmapPanel = () => {
         return (
           <div
             key={sector.symbol}
-            className={`heatmap-cell ${getColorClass(data.change)}`}
+            className={`heatmap-cell p-4 text-center transition-all duration-200 border border-[rgba(0,0,0,0.3)] hover:scale-105 hover:shadow-[0_4px_12px_rgba(0,0,0,0.4)] ${getColorClass(data.change)}`}
           >
-            <div className="sector-name">{sector.name}</div>
-            <div className="sector-change">{formatPercent(data.change)}</div>
+            <div className="text-xs font-bold mb-1">{sector.name}</div>
+            <div className="text-base font-bold">{formatPercent(data.change)}</div>
           </div>
         )
       })}

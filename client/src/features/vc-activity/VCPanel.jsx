@@ -2,7 +2,6 @@ import { createFeedFetcher } from '@features/news/createFeedFetcher'
 import { useI18n } from '@context/I18nContext'
 import { useFeedData } from '@hooks/useFeedData'
 import { formatAmount, getTimeAgo } from '@utils'
-import './VCPanel.css'
 
 // Recent major VC fund raises (2025/2026)
 const RECENT_FUNDS = [
@@ -30,29 +29,29 @@ const VCPanel = () => {
     const { data: vcNews, loading } = useFeedData(fetchVCNews, 10 * 60 * 1000)
 
     return (
-        <div className="vc-panel">
-            <div className="vc-header-stats">
-                <div className="stat-item">
-                    <span className="stat-label">{t('vc.capitalRaised')}</span>
-                    <span className="stat-value purple">{formatAmount(VC_STATS.totalRaised)}</span>
+        <div className="flex flex-col h-full overflow-hidden">
+            <div className="flex justify-around px-2 pb-2.5 border-b border-[rgba(255,255,255,0.05)]">
+                <div className="flex flex-col items-center">
+                    <span className="text-[0.65rem] text-text-dim uppercase">{t('vc.capitalRaised')}</span>
+                    <span className="text-lg font-bold !text-[#a78bfa]">{formatAmount(VC_STATS.totalRaised)}</span>
                 </div>
-                <div className="stat-item">
-                    <span className="stat-label">{t('vc.fundsClosed')}</span>
-                    <span className="stat-value">{VC_STATS.funds}</span>
+                <div className="flex flex-col items-center">
+                    <span className="text-[0.65rem] text-text-dim uppercase">{t('vc.fundsClosed')}</span>
+                    <span className="text-lg font-bold">{VC_STATS.funds}</span>
                 </div>
             </div>
 
-            <div className="vc-news-container">
+            <div className="flex-1 overflow-y-auto flex flex-col">
                 {loading && vcNews.length === 0 ? (
-                    <div className="loading-msg">{t('vc.loading')}</div>
+                    <div className="p-4 text-center text-text-dim text-[0.8rem]">{t('vc.loading')}</div>
                 ) : (
                     vcNews.map((news, idx) => (
-                        <a key={idx} href={news.link} target="_blank" rel="noopener noreferrer" className="vc-news-item">
-                            <div className="vc-news-header">
-                                <span className="vc-news-source">{news.source}</span>
-                                <span className="vc-news-time">{getTimeAgo(news.date, locale)}</span>
+                        <a key={idx} href={news.link} target="_blank" rel="noopener noreferrer" className="flex flex-col p-3 border-b border-[rgba(255,255,255,0.05)] no-underline transition-colors duration-200 hover:bg-[rgba(255,255,255,0.03)]">
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="text-[0.7rem] text-[var(--purple)] uppercase font-semibold">{news.source}</span>
+                                <span className="text-[0.7rem] text-text-dim">{getTimeAgo(news.date, locale)}</span>
                             </div>
-                            <span className="vc-news-title">{news.title}</span>
+                            <span className="text-[0.85rem] text-white leading-[1.4] font-medium line-clamp-2">{news.title}</span>
                         </a>
                     ))
                 )}
