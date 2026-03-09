@@ -2,7 +2,6 @@ import { StartupsFeedService } from './startupsFeedService'
 import { useI18n } from '@context/I18nContext'
 import { useFeedData } from '@hooks/useFeedData'
 import { formatAmount, getTimeAgo } from '@utils'
-import './StartupsPanel.css'
 
 // Recent major funding rounds (2025/2026)
 const RECENT_FUNDING = [
@@ -29,29 +28,29 @@ const StartupsPanel = () => {
     const totalRaisedVal = RECENT_FUNDING.reduce((acc, curr) => acc + curr.amount, 0)
 
     return (
-        <div className="startups-panel">
-            <div className="startups-header-stats">
-                <div className="stat-item">
-                    <span className="stat-label">{t('startups.totalRaised')}</span>
-                    <span className="stat-value green">{formatAmount(totalRaisedVal)}</span>
+        <div className="flex flex-col h-full overflow-hidden">
+            <div className="flex justify-around px-2 pb-2.5 border-b border-[rgba(255,255,255,0.05)]">
+                <div className="flex flex-col items-center">
+                    <span className="text-[0.65rem] text-text-dim uppercase">{t('startups.totalRaised')}</span>
+                    <span className="text-lg font-bold !text-[var(--green)]">{formatAmount(totalRaisedVal)}</span>
                 </div>
-                <div className="stat-item">
-                    <span className="stat-label">{t('startups.deals')}</span>
-                    <span className="stat-value">{RECENT_FUNDING.length}</span>
+                <div className="flex flex-col items-center">
+                    <span className="text-[0.65rem] text-text-dim uppercase">{t('startups.deals')}</span>
+                    <span className="text-lg font-bold">{RECENT_FUNDING.length}</span>
                 </div>
             </div>
 
-            <div className="startups-news-container">
+            <div className="flex-1 overflow-y-auto flex flex-col">
                 {loading && news.length === 0 ? (
-                    <div className="loading-msg">{t('startups.loading')}</div>
+                    <div className="p-4 text-center text-text-dim text-[0.8rem]">{t('startups.loading')}</div>
                 ) : (
                     news.map((item, idx) => (
-                        <a key={idx} href={item.link} target="_blank" rel="noopener noreferrer" className="startup-news-item">
-                            <div className="startup-news-header">
-                                <span className="startup-news-source">{item.source}</span>
-                                <span className="startup-news-time">{getTimeAgo(item.date, locale)}</span>
+                        <a key={idx} href={item.link} target="_blank" rel="noopener noreferrer" className="flex flex-col p-3 border-b border-[rgba(255,255,255,0.05)] no-underline transition-colors duration-200 hover:bg-[rgba(255,255,255,0.03)]">
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="text-[0.7rem] text-[var(--green)] uppercase font-semibold">{item.source}</span>
+                                <span className="text-[0.7rem] text-text-dim">{getTimeAgo(item.date, locale)}</span>
                             </div>
-                            <span className="startup-news-title">{item.title}</span>
+                            <span className="text-[0.85rem] text-white leading-[1.4] font-medium line-clamp-2">{item.title}</span>
                         </a>
                     ))
                 )}
