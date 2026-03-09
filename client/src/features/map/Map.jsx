@@ -1,9 +1,8 @@
 import GlobalMap from './GlobalMap'
-import './Map.css'
 
 const Map = () => {
   return (
-    <div className="map-page">
+    <div className="w-full flex-1 min-h-0 flex">
       <GlobalMap />
     </div>
   )
