@@ -52,14 +52,19 @@ const GlobalMap = () => {
     if (mode === 'flat') {
       // Reset rotation when switching to flat mode
       setRotation([0, 0])
+      rotationRef.current = [0, 0]
       // Reset zoom and center the map in flat mode
       setZoomLevel(1)
       setTranslation([0, 0])
       // Disable auto-rotation in flat mode
       setIsAutoRotating(false)
+      // Reset D3 zoom so it re-initializes cleanly for flat mode
+      zoomRef.current = null
     } else {
       // Reset translation when switching back to 3D mode
       setTranslation([0, 0])
+      // Reset D3 zoom so it doesn't interfere with 3D interaction
+      zoomRef.current = null
     }
   }
 
@@ -216,7 +221,7 @@ const GlobalMap = () => {
           projection = d3.geoNaturalEarth1()
             .scale((width / (2 * Math.PI)) * zoomLevel)
             .translate([width / 2 + translation[0], height / 2 + translation[1]])
-            .center([180, 0])
+            .center([0, 0])
         }
       } else {
         projection = d3.geoAlbersUsa()
