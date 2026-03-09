@@ -10,7 +10,6 @@ import { useDynamicRegions } from '@hooks/useDynamicRegions'
 import { useI18n } from '@context/I18nContext'
 import HotspotModal from './HotspotModal'
 import TickerStrip from '@features/markets/TickerStrip'
-import './GlobalMap.css'
 
 const GlobalMap = () => {
   const svgRef = useRef(null)
@@ -1162,8 +1161,8 @@ const GlobalMap = () => {
 
   if (loading || (!worldData && !usData)) {
     return (
-      <div className="global-map-loading">
-        <div className="loading-spinner"></div>
+      <div className="flex flex-col items-center justify-center flex-1 w-full h-full gap-4 text-text-secondary">
+        <div className="w-10 h-10 border-[3px] border-border-main border-t-accent rounded-full animate-spin"></div>
         <div>{t('map.loadingData')}</div>
       </div>
     )
@@ -1171,8 +1170,8 @@ const GlobalMap = () => {
 
   if (error) {
     return (
-      <div className="global-map-error">
-        <div className="error-icon">!</div>
+      <div className="flex flex-col items-center justify-center flex-1 w-full h-full gap-4 text-text-secondary">
+        <div className="text-3xl">!</div>
         <div>{error}</div>
         <button onClick={loadMapData} style={{ marginTop: '10px', padding: '5px 10px', cursor: 'pointer' }}>
           {t('common.retry')}
@@ -1184,7 +1183,7 @@ const GlobalMap = () => {
   // Extra safety check - don't render if we don't have the required data for current view
   if (mapView === 'global' && !worldData) {
     return (
-      <div className="global-map-loading">
+      <div className="flex flex-col items-center justify-center flex-1 w-full h-full gap-4 text-text-secondary">
         <div>{t('map.loadingWorld')}</div>
       </div>
     )
@@ -1192,34 +1191,34 @@ const GlobalMap = () => {
 
   if (mapView === 'us' && !usData) {
     return (
-      <div className="global-map-loading">
+      <div className="flex flex-col items-center justify-center flex-1 w-full h-full gap-4 text-text-secondary">
         <div>{t('map.loadingUs')}</div>
       </div>
     )
   }
 
   return (
-    <div className="global-map-container" ref={containerRef}>
+    <div className="global-map-container relative h-full w-full flex-1 bg-[linear-gradient(135deg,#0a1419_0%,#020a08_100%)] overflow-hidden" ref={containerRef}>
       {/* Quick Stats Bar */}
-      <div className="map-quick-stats">
-        <div className="stat-item">
-          <span className="stat-label">{t('map.activeConflicts')}</span>
-          <span className={`stat-value ${activeConflicts > 2 ? 'critical' : ''}`}>{activeConflicts}</span>
+      <div className="absolute top-0 left-0 right-0 flex justify-center items-center gap-6 py-3 px-4 bg-nav-bg backdrop-blur-[10px] border-b border-border-main z-20">
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[0.6rem] font-semibold tracking-[0.1em] text-text-dim">{t('map.activeConflicts')}</span>
+          <span className={`stat-value text-base font-bold font-[family-name:var(--font-mono)] text-accent ${activeConflicts > 2 ? 'critical' : ''}`}>{activeConflicts}</span>
         </div>
-        <div className="stat-divider"></div>
-        <div className="stat-item">
-          <span className="stat-label">{t('map.globalAlert')}</span>
-          <span className={`stat-value alert-${alertLevel}`}>{t(`map.${alertLevel}`)}</span>
+        <div className="w-px h-[30px] bg-border-main"></div>
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[0.6rem] font-semibold tracking-[0.1em] text-text-dim">{t('map.globalAlert')}</span>
+          <span className={`stat-value text-base font-bold font-[family-name:var(--font-mono)] text-accent alert-${alertLevel}`}>{t(`map.${alertLevel}`)}</span>
         </div>
-        <div className="stat-divider"></div>
-        <div className="stat-item">
-          <span className="stat-label">{t('map.intelHotspots')}</span>
-          <span className="stat-value">{totalIntel > 0 ? totalIntel : '—'}</span>
+        <div className="w-px h-[30px] bg-border-main"></div>
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[0.6rem] font-semibold tracking-[0.1em] text-text-dim">{t('map.intelHotspots')}</span>
+          <span className="stat-value text-base font-bold font-[family-name:var(--font-mono)] text-accent">{totalIntel > 0 ? totalIntel : '—'}</span>
         </div>
-        <div className="stat-divider"></div>
-        <div className="stat-item">
+        <div className="w-px h-[30px] bg-border-main"></div>
+        <div className="flex flex-col items-center gap-1">
           <button 
-            className={`auto-rotate-btn ${isAutoRotating ? 'active' : ''}`}
+            className={`py-1.5 px-3 bg-transparent border border-border-main text-text-secondary text-[0.65rem] font-semibold tracking-[0.05em] cursor-pointer transition-all duration-200 hover:border-accent hover:text-accent ${isAutoRotating ? '!bg-accent !border-accent !text-bg-dark' : ''}`}
             onClick={() => setIsAutoRotating(!isAutoRotating)}
             title={isAutoRotating ? t('map.stopRotation') : t('map.startRotation')}
           >
@@ -1227,34 +1226,34 @@ const GlobalMap = () => {
           </button>
         </div>
       </div>
-      <div className="map-controls map-controls-right">
-        <div className="map-view-toggle">
+      <div className="absolute top-16 z-10 flex flex-col gap-4 right-4 items-end">
+        <div className="flex bg-[rgba(10,14,20,0.9)] border border-border-main overflow-hidden">
           <button
-            className={mapView === 'global' ? 'active' : ''}
+            className={`py-2 px-4 bg-transparent text-text-secondary border-none text-xs font-bold tracking-[1px] cursor-pointer transition-all duration-200 border-r border-border-main hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${mapView === 'global' ? '!bg-accent !text-bg-dark' : ''}`}
             onClick={() => setMapView('global')}
           >
             {t('map.global')}
           </button>
           <button
-            className={mapView === 'us' ? 'active' : ''}
+            className={`py-2 px-4 bg-transparent text-text-secondary border-none text-xs font-bold tracking-[1px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${mapView === 'us' ? '!bg-accent !text-bg-dark' : ''}`}
             onClick={() => setMapView('us')}
           >
             {t('map.us')}
           </button>
         </div>
-        <div className="map-zoom-controls">
-          <button onClick={handleZoomIn} title={t('map.zoomIn')}>+</button>
-          <div className="zoom-level">{zoomLevel.toFixed(1)}x</div>
-          <button onClick={handleZoomOut} title={t('map.zoomOut')}>−</button>
-          <button onClick={handleZoomReset} title={t('map.reset')}>RST</button>
+        <div className="flex gap-1 bg-[rgba(10,14,20,0.9)] border border-border-main p-1">
+          <button className="w-8 h-8 bg-transparent text-text-primary border-none text-base font-bold cursor-pointer transition-all duration-200 hover:bg-accent hover:text-bg-dark" onClick={handleZoomIn} title={t('map.zoomIn')}>+</button>
+          <div className="flex items-center px-2 text-xs font-semibold text-text-secondary min-w-[3rem] justify-center">{zoomLevel.toFixed(1)}x</div>
+          <button className="w-8 h-8 bg-transparent text-text-primary border-none text-base font-bold cursor-pointer transition-all duration-200 hover:bg-accent hover:text-bg-dark" onClick={handleZoomOut} title={t('map.zoomOut')}>−</button>
+          <button className="w-8 h-8 bg-transparent text-text-primary border-none text-base font-bold cursor-pointer transition-all duration-200 hover:bg-accent hover:text-bg-dark" onClick={handleZoomReset} title={t('map.reset')}>RST</button>
         </div>
       </div>
-      <div className="map-controls map-controls-left">
-        <div className="map-layer-toggles">
+      <div className="absolute top-16 z-10 flex flex-col gap-4 left-4 items-start">
+        <div className="flex flex-col gap-2">
           {/* Layer Presets */}
-          <div className="layer-preset-group">
+          <div className="flex gap-1 bg-[rgba(10,14,20,0.9)] border border-border-main p-1 mb-2">
             <button
-              className={`layer-preset ${!layerVisibility.shippingChokepoints && !layerVisibility.conflictZones && !layerVisibility.militaryBases ? 'active' : ''}`}
+              className={`py-1.5 px-3 bg-transparent text-text-secondary border border-transparent text-[0.7rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent hover:border-accent ${!layerVisibility.shippingChokepoints && !layerVisibility.conflictZones && !layerVisibility.militaryBases ? '!bg-accent !text-bg-dark !border-accent' : ''}`}
               onClick={() => setLayerVisibility(prev => ({
                 ...prev,
                 hotspots: false,
@@ -1271,7 +1270,7 @@ const GlobalMap = () => {
               {t('map.presetIntel')}
             </button>
             <button
-              className={`layer-preset ${layerVisibility.conflictZones && layerVisibility.intelHotspots ? 'active' : ''}`}
+              className={`py-1.5 px-3 bg-transparent text-text-secondary border border-transparent text-[0.7rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent hover:border-accent ${layerVisibility.conflictZones && layerVisibility.intelHotspots ? '!bg-accent !text-bg-dark !border-accent' : ''}`}
               onClick={() => setLayerVisibility(prev => ({
                 ...prev,
                 hotspots: true,
@@ -1288,7 +1287,7 @@ const GlobalMap = () => {
               {t('map.presetConflict')}
             </button>
             <button
-              className={`layer-preset ${layerVisibility.shippingChokepoints && layerVisibility.underseaCables ? 'active' : ''}`}
+              className={`py-1.5 px-3 bg-transparent text-text-secondary border border-transparent text-[0.7rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent hover:border-accent ${layerVisibility.shippingChokepoints && layerVisibility.underseaCables ? '!bg-accent !text-bg-dark !border-accent' : ''}`}
               onClick={() => setLayerVisibility(prev => ({
                 ...prev,
                 hotspots: false,
@@ -1305,7 +1304,7 @@ const GlobalMap = () => {
               {t('map.presetTrade')}
             </button>
             <button
-              className={`layer-preset ${layerVisibility.militaryBases && layerVisibility.nuclearFacilities ? 'active' : ''}`}
+              className={`py-1.5 px-3 bg-transparent text-text-secondary border border-transparent text-[0.7rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent hover:border-accent ${layerVisibility.militaryBases && layerVisibility.nuclearFacilities ? '!bg-accent !text-bg-dark !border-accent' : ''}`}
               onClick={() => setLayerVisibility(prev => ({
                 ...prev,
                 hotspots: false,
@@ -1324,16 +1323,16 @@ const GlobalMap = () => {
           </div>
           
           {/* Individual Layer Toggles */}
-          <div className="layer-toggle-group">
+          <div className="flex gap-1 bg-[rgba(10,14,20,0.9)] border border-border-main p-1">
             <button
-              className={`layer-toggle ${layerVisibility.intelHotspots ? 'active' : ''}`}
+              className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.intelHotspots ? '!bg-accent !text-bg-dark' : ''}`}
               onClick={() => toggleLayer('intelHotspots')}
               title={t('map.intelligenceHotspots')}
             >
               {t('map.intel')}
             </button>
             <button
-              className={`layer-toggle ${layerVisibility.hotspots ? 'active' : ''}`}
+              className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.hotspots ? '!bg-accent !text-bg-dark' : ''}`}
               onClick={() => toggleLayer('hotspots')}
               title={t('map.watchZones')}
             >
@@ -1341,7 +1340,7 @@ const GlobalMap = () => {
             </button>
             {mapView === 'us' && (
               <button
-                className={`layer-toggle ${layerVisibility.usCities ? 'active' : ''}`}
+                className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.usCities ? '!bg-accent !text-bg-dark' : ''}`}
                 onClick={() => toggleLayer('usCities')}
                 title={t('map.majorCities')}
               >
@@ -1350,44 +1349,44 @@ const GlobalMap = () => {
             )}
           </div>
           {mapView === 'global' && (
-            <div className="layer-toggle-group">
+            <div className="flex gap-1 bg-[rgba(10,14,20,0.9)] border border-border-main p-1">
               <button
-                className={`layer-toggle ${layerVisibility.conflictZones ? 'active' : ''}`}
+                className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.conflictZones ? '!bg-accent !text-bg-dark' : ''}`}
                 onClick={() => toggleLayer('conflictZones')}
                 title={t('map.activeConflictsTitle')}
               >
                 {t('map.conflict')}
               </button>
               <button
-                className={`layer-toggle ${layerVisibility.shippingChokepoints ? 'active' : ''}`}
+                className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.shippingChokepoints ? '!bg-accent !text-bg-dark' : ''}`}
                 onClick={() => toggleLayer('shippingChokepoints')}
                 title={t('map.shippingRoutes')}
               >
                 {t('map.shipping')}
               </button>
               <button
-                className={`layer-toggle ${layerVisibility.militaryBases ? 'active' : ''}`}
+                className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.militaryBases ? '!bg-accent !text-bg-dark' : ''}`}
                 onClick={() => toggleLayer('militaryBases')}
                 title={t('map.militaryBases')}
               >
                 {t('map.military')}
               </button>
               <button
-                className={`layer-toggle ${layerVisibility.nuclearFacilities ? 'active' : ''}`}
+                className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.nuclearFacilities ? '!bg-accent !text-bg-dark' : ''}`}
                 onClick={() => toggleLayer('nuclearFacilities')}
                 title={t('map.nuclearFacilities')}
               >
                 {t('map.nuclear')}
               </button>
               <button
-                className={`layer-toggle ${layerVisibility.underseaCables ? 'active' : ''}`}
+                className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.underseaCables ? '!bg-accent !text-bg-dark' : ''}`}
                 onClick={() => toggleLayer('underseaCables')}
                 title={t('map.underseaCables')}
               >
                 {t('map.infra')}
               </button>
               <button
-                className={`layer-toggle ${layerVisibility.cyberRegions ? 'active' : ''}`}
+                className={`py-1 px-2 bg-transparent text-text-secondary border-none text-[0.65rem] font-bold tracking-[0.5px] cursor-pointer transition-all duration-200 hover:bg-[rgba(99,179,237,0.1)] hover:text-accent ${layerVisibility.cyberRegions ? '!bg-accent !text-bg-dark' : ''}`}
                 onClick={() => toggleLayer('cyberRegions')}
                 title={t('map.cyberRegions')}
               >
@@ -1397,13 +1396,13 @@ const GlobalMap = () => {
           )}
         </div>
       </div>
-      <div className="map-labels">
-        <div className="map-label bottom-left">
-          <span className="legend-item"><span className="legend-dot hotspot"></span>{t('map.high')}</span>
-          <span className="legend-item"><span className="legend-dot active"></span>{t('map.medium')}</span>
-          <span className="legend-item"><span className="legend-dot inactive"></span>{t('map.noIntel')}</span>
+      <div className="absolute inset-0 pointer-events-none z-[5]">
+        <div className="absolute text-xs font-semibold text-accent tracking-[1px] p-2 bg-[rgba(10,14,20,0.7)] border border-border-main bottom-2 left-2 rounded-tr flex gap-4">
+          <span className="flex items-center gap-1 text-[0.65rem]"><span className="legend-dot w-2 h-2 rounded-full inline-block hotspot"></span>{t('map.high')}</span>
+          <span className="flex items-center gap-1 text-[0.65rem]"><span className="legend-dot w-2 h-2 rounded-full inline-block active"></span>{t('map.medium')}</span>
+          <span className="flex items-center gap-1 text-[0.65rem]"><span className="legend-dot w-2 h-2 rounded-full inline-block inactive"></span>{t('map.noIntel')}</span>
         </div>
-        <div className="map-label bottom-right">
+        <div className="absolute text-xs font-semibold text-accent tracking-[1px] p-2 bg-[rgba(10,14,20,0.7)] border border-border-main bottom-2 right-2 rounded-tl font-[family-name:var(--font-mono)] !text-[0.65rem]">
           <div>{new Date().toISOString().slice(0, 16).replace('T', ' ')}Z</div>
           <div style={{ fontSize: '9px', opacity: 0.7 }}>
             {t('map.updated', { time: lastUpdated.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) })}
