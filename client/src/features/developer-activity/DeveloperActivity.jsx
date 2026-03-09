@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { fetchChainActivity } from './githubActivity'
 import { fetchChainStats, formatTVL, formatCount, CHAIN_CONFIG } from './chainStats'
 import { useI18n } from '@context/I18nContext'
-import './DeveloperActivity.css'
+
 
 const CHAIN_DISPLAY = {
     ethereum: {
@@ -91,7 +91,7 @@ const ContributionGraph = ({ weeks, color, locale, t }) => {
     const svgWidth = DAY_LABEL_WIDTH + weeks.length * CELL_TOTAL
 
     return (
-        <div className="contribution-graph">
+        <div className="w-full relative">
             <svg
                 width="100%"
                 viewBox={`0 0 ${svgWidth} ${SVG_HEIGHT}`}
@@ -153,7 +153,7 @@ const ContributionGraph = ({ weeks, color, locale, t }) => {
 
             {tooltip && (
                 <div
-                    className="graph-tooltip"
+                    className="fixed -translate-x-1/2 -translate-y-full bg-bg-dark border border-border-main rounded py-1 px-2 text-[0.6rem] text-text-primary whitespace-nowrap pointer-events-none z-[9999]"
                     style={{ left: tooltip.x, top: tooltip.y - 8 }}
                 >
                     {tooltip.text}
@@ -197,40 +197,40 @@ const ChainCard = ({ chainKey, stats, t, locale }) => {
     const validatorLabel = chainStats?.validatorLabel ?? t('developer.validators')
 
     return (
-        <div className="chain-card">
-            <div className="chain-header">
-                <div className="chain-name" style={{ color: displayConfig.color }}>
+        <div className="bg-bg-panel border border-border-main rounded-lg p-5 flex flex-col gap-4">
+            <div className="mb-2">
+                <div className="text-[0.85rem] font-bold uppercase tracking-[0.05em]" style={{ color: displayConfig.color }}>
                     {displayConfig.name}
                 </div>
             </div>
 
             {/* Metrics row */}
-            <div className="chain-metrics">
-                <div className="metric">
-                    <span className="metric-label">{t('developer.totalCommits')}</span>
-                    <span className="metric-value" style={{ color: displayConfig.color }}>
+            <div className="grid grid-cols-3 gap-2 p-3 bg-panel-item-bg rounded-md border border-border-glass">
+                <div className="flex flex-row items-center justify-center gap-1.5">
+                    <span className="text-[0.55rem] text-text-dim uppercase tracking-[0.05em]">{t('developer.totalCommits')}</span>
+                    <span className="text-[0.9rem] font-bold font-[family-name:var(--font-mono)]" style={{ color: displayConfig.color }}>
                         {loading ? '...' : totalCommits ? formatCount(totalCommits) : '--'}
                     </span>
                 </div>
-                <div className="metric">
-                    <span className="metric-label">TVL</span>
-                    <span className="metric-value" style={{ color: displayConfig.color }}>
+                <div className="flex flex-row items-center justify-center gap-1.5">
+                    <span className="text-[0.55rem] text-text-dim uppercase tracking-[0.05em]">TVL</span>
+                    <span className="text-[0.9rem] font-bold font-[family-name:var(--font-mono)]" style={{ color: displayConfig.color }}>
                         {tvl ?? '...'}
                     </span>
                 </div>
-                <div className="metric">
-                    <span className="metric-label">{validatorLabel}</span>
-                    <span className="metric-value" style={{ color: displayConfig.color }}>
+                <div className="flex flex-row items-center justify-center gap-1.5">
+                    <span className="text-[0.55rem] text-text-dim uppercase tracking-[0.05em]">{validatorLabel}</span>
+                    <span className="text-[0.9rem] font-bold font-[family-name:var(--font-mono)]" style={{ color: displayConfig.color }}>
                         {validators ?? '...'}
                     </span>
                 </div>
             </div>
 
-            <div className="chain-repos">
+            <div className="flex flex-wrap gap-1.5">
                 {config.repos.map((repo, idx) => (
                     <a
                         key={idx}
-                        className="repo-tag"
+                        className="text-[0.55rem] text-text-dim bg-panel-item-bg py-[0.15rem] px-1.5 rounded-[3px] font-[family-name:var(--font-mono)] no-underline transition-colors duration-150 hover:text-text-primary"
                         href={`https://github.com/${repo}`}
                         target="_blank"
                         rel="noreferrer"
@@ -240,29 +240,29 @@ const ChainCard = ({ chainKey, stats, t, locale }) => {
                 ))}
             </div>
 
-            <div className="chain-graph">
-                {loading && <div className="graph-skeleton" />}
-                {error && <div className="graph-error">{error}</div>}
+            <div className="w-full relative overflow-hidden">
+                {loading && <div className="w-full h-[100px] bg-[linear-gradient(90deg,rgba(255,255,255,0.03)_25%,rgba(255,255,255,0.07)_50%,rgba(255,255,255,0.03)_75%)] bg-[length:200%_100%] animate-shimmer rounded" />}
+                {error && <div className="text-[0.6rem] text-text-dim leading-relaxed py-1">{error}</div>}
                 {!loading && !error && data && (
                     <ContributionGraph weeks={data.weeks} color={displayConfig.color} locale={locale} t={t} />
                 )}
                 {!loading && !error && !data && (
-                    <div className="graph-error">{t('developer.statsUnavailable')}</div>
+                    <div className="text-[0.6rem] text-text-dim leading-relaxed py-1">{t('developer.statsUnavailable')}</div>
                 )}
             </div>
 
-            <div className="graph-legend">
-                <span className="legend-label">{t('developer.less')}</span>
-                <div className="legend-squares">
+            <div className="flex items-center justify-end gap-1.5">
+                <span className="text-[0.5rem] text-text-dim uppercase">{t('developer.less')}</span>
+                <div className="flex gap-0.5">
                     {[0,1,2,3,4].map(level => (
                         <span
                             key={level}
-                            className="legend-square"
+                            className="w-2 h-2 rounded-sm"
                             style={{ background: getCellColor(level, displayConfig.color) }}
                         />
                     ))}
                 </div>
-                <span className="legend-label">{t('developer.more')}</span>
+                <span className="text-[0.5rem] text-text-dim uppercase">{t('developer.more')}</span>
             </div>
         </div>
     )
@@ -279,11 +279,11 @@ const ChainActivity = () => {
     }, [])
 
     return (
-        <div className="chain-activity">
-            <div className="chain-activity-header">
-                <span className="chain-activity-title">{t('developer.title')}</span>
+        <div className="mt-8 pt-6 border-t border-border-main">
+            <div className="mb-4">
+                <span className="text-[0.65rem] font-bold text-text-dim uppercase tracking-[0.05em]">{t('developer.title')}</span>
             </div>
-            <div className="chain-activity-grid">
+            <div className="grid grid-cols-3 gap-6 max-[1400px]:grid-cols-2 max-[1000px]:grid-cols-1 max-[1000px]:gap-4">
                 {Object.keys(CHAIN_CONFIG).map(key => (
                     <ChainCard key={key} chainKey={key} stats={stats} t={t} locale={locale} />
                 ))}

@@ -9,7 +9,6 @@ import { usePanelSettings } from '@hooks/usePanelSettings'
 import { ThemeProvider } from '@context/ThemeContext'
 import { I18nProvider } from '@context/I18nContext'
 import { RefreshProvider, RefreshContext } from '@context/RefreshContext'
-import './App.css'
 
 function AppContent() {
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -26,7 +25,7 @@ function AppContent() {
   }
 
   return (
-    <div className="app">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Navbar
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}

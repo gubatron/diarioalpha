@@ -1,5 +1,4 @@
 import { useI18n } from '@context/I18nContext'
-import './HotspotModal.css'
 
 // Map regions/keywords to market assets
 const MARKET_IMPACT_MAP = {
@@ -97,65 +96,65 @@ const HotspotModal = ({ selectedHotspot, onClose, newsLoading }) => {
   const severityLabel = selectedHotspot.severity || selectedHotspot.level || 'medium'
 
   return (
-    <div className="hotspot-popup visible">
-      <div className="hotspot-popup-header">
-        <div className="hotspot-popup-title">
+    <div className="absolute top-0 right-0 bottom-0 w-[420px] bg-[rgba(10,14,20,0.98)] border-l border-l-accent p-6 overflow-y-auto z-[100] translate-x-0 transition-transform duration-300 shadow-[-5px_0_30px_rgba(0,0,0,0.5)]">
+      <div className="flex justify-between items-center mb-4">
+        <div className="text-xl font-bold text-text-primary">
           {selectedHotspot.name}
           {selectedHotspot.subtext && (
-            <span className="hotspot-popup-subtext"> - {selectedHotspot.subtext}</span>
+            <span className="text-[0.85rem] font-normal text-text-secondary ml-2"> - {selectedHotspot.subtext}</span>
           )}
         </div>
         {selectedHotspot.type === 'hotspot' ? (
-          <div className={`hotspot-popup-level ${selectedHotspot.severity || selectedHotspot.level || 'unknown'}`}>
+          <div className={`hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current ${selectedHotspot.severity || selectedHotspot.level || 'unknown'}`}>
             {t(`map.${severityLabel}`)}
           </div>
         ) : selectedHotspot.type === 'country' ? (
-          <div className="hotspot-popup-level country">{t('map.country')}</div>
+          <div className="hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current country">{t('map.country')}</div>
         ) : selectedHotspot.type === 'intel' ? (
-          <div className={`hotspot-popup-level ${selectedHotspot.severity || 'unknown'}`}>
+          <div className={`hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current ${selectedHotspot.severity || 'unknown'}`}>
             {t(`map.${selectedHotspot.severity || 'medium'}`)}
           </div>
         ) : selectedHotspot.type === 'chokepoint' ? (
-          <div className="hotspot-popup-level elevated">{t('map.shipping')}</div>
+          <div className="hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current elevated">{t('map.shipping')}</div>
         ) : selectedHotspot.type === 'conflict' ? (
-          <div className="hotspot-popup-level high">{t('map.conflict')}</div>
+          <div className="hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current high">{t('map.conflict')}</div>
         ) : selectedHotspot.type === 'base' ? (
-          <div className="hotspot-popup-level medium">{t('map.militaryBase')}</div>
+          <div className="hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current medium">{t('map.militaryBase')}</div>
         ) : selectedHotspot.type === 'nuclear' ? (
-          <div className="hotspot-popup-level high">{t('map.nuclear')}</div>
+          <div className="hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current high">{t('map.nuclear')}</div>
         ) : selectedHotspot.type === 'cyber' ? (
-          <div className="hotspot-popup-level elevated">{t('map.cyber')}</div>
+          <div className="hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current elevated">{t('map.cyber')}</div>
         ) : selectedHotspot.type === 'city' ? (
-          <div className={`hotspot-popup-level ${selectedHotspot.severity || 'medium'}`}>
+          <div className={`hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current ${selectedHotspot.severity || 'medium'}`}>
             {selectedHotspot.severity && typeof selectedHotspot.severity === 'string' ? t(`map.${selectedHotspot.severity}`) : t('map.location')}
           </div>
         ) : (
-          <div className="hotspot-popup-level unknown">{t('map.location')}</div>
+          <div className="hotspot-popup-level py-1 px-3 text-xs font-bold uppercase tracking-[1px] border border-current unknown">{t('map.location')}</div>
         )}
       </div>
 
       {selectedHotspot.category && (
-        <div className="hotspot-popup-category">{selectedHotspot.category}</div>
+        <div className="text-text-secondary text-[0.85rem] mb-3 leading-relaxed [&_strong]:text-text-primary [&_strong]:mr-1">{selectedHotspot.category}</div>
       )}
       {selectedHotspot.location && (
-        <div className="hotspot-popup-location">{selectedHotspot.location}</div>
+        <div className="text-text-secondary text-[0.85rem] mb-3 leading-relaxed [&_strong]:text-text-primary [&_strong]:mr-1">{selectedHotspot.location}</div>
       )}
       {selectedHotspot.region && (
-        <div className="hotspot-popup-location">
+        <div className="text-text-secondary text-[0.85rem] mb-3 leading-relaxed [&_strong]:text-text-primary [&_strong]:mr-1">
           <strong>{t('map.region')}</strong> {selectedHotspot.region}
         </div>
       )}
 
       {/* ASSETS AT RISK SECTION */}
       {relatedAssets.length > 0 && (
-        <div className="hotspot-popup-assets-section">
-          <div className="hotspot-popup-section-title">{t('map.assetsAtRisk')}</div>
-          <div className="hotspot-popup-assets-grid">
+        <div className="mt-4">
+          <div className="text-[0.7rem] font-bold text-accent tracking-[1px] mt-6 mb-3 border-b border-[rgba(0,255,136,0.2)] pb-1">{t('map.assetsAtRisk')}</div>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-3 mb-4">
             {relatedAssets.map((asset, i) => (
-              <div key={i} className="hotspot-asset-card">
-                <div className="asset-ticker">{asset.ticker}</div>
-                <div className="asset-name">{asset.name}</div>
-                <div className={`asset-change ${asset.change.startsWith('+') ? 'positive' : 'negative'}`}>
+              <div key={i} className="bg-[rgba(255,255,255,0.03)] border border-border-main p-3 rounded text-center transition-all duration-200 hover:bg-[rgba(255,255,255,0.05)] hover:border-accent hover:-translate-y-0.5">
+                <div className="text-[0.9rem] font-bold text-text-primary mb-0.5">{asset.ticker}</div>
+                <div className="text-[0.7rem] text-text-secondary mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis">{asset.name}</div>
+                <div className={`text-[0.8rem] font-semibold font-[family-name:var(--font-mono)] ${asset.change.startsWith('+') ? 'text-[#00ff88]' : 'text-[#ff3333]'}`}>
                   {asset.change}
                 </div>
               </div>
@@ -164,42 +163,42 @@ const HotspotModal = ({ selectedHotspot, onClose, newsLoading }) => {
         </div>
       )}
 
-      <div className="hotspot-popup-desc">
+      <div className="text-text-secondary mb-4 leading-relaxed">
         {selectedHotspot.description || t('map.situationDefault', { name: selectedHotspot.name })}
       </div>
 
       {selectedHotspot.status && (
-        <div className="hotspot-popup-status">{t('map.status', { status: selectedHotspot.status })}</div>
+        <div className="text-text-secondary text-[0.85rem] mb-3 leading-relaxed [&_strong]:text-text-primary [&_strong]:mr-1">{t('map.status', { status: selectedHotspot.status })}</div>
       )}
 
       {/* LIVE INTEL SECTION */}
       {newsLoading ? (
-        <div className="hotspot-popup-headlines">
-          <div className="hotspot-popup-headlines-title">{t('map.liveIntel')}</div>
-          <div className="hotspot-popup-loading">
-            <div className="loading-spinner"></div>
+        <div className="mt-4 pt-4 border-t border-border-main">
+          <div className="text-xs font-bold text-accent mb-2 uppercase tracking-[1px]">{t('map.liveIntel')}</div>
+          <div className="flex items-center gap-3 py-4 text-text-secondary text-[0.8rem]">
+            <div className="w-5 h-5 border-2 border-border-main border-t-accent rounded-full animate-spin"></div>
             <span>{t('map.loadingIntel')}</span>
           </div>
         </div>
       ) : selectedHotspot.news && selectedHotspot.news.length > 0 ? (
-        <div className="hotspot-popup-headlines">
-          <div className="hotspot-popup-headlines-title">{t('map.liveIntel')} ({selectedHotspot.news.length})</div>
+        <div className="mt-4 pt-4 border-t border-border-main">
+          <div className="text-xs font-bold text-accent mb-2 uppercase tracking-[1px]">{t('map.liveIntel')} ({selectedHotspot.news.length})</div>
           {selectedHotspot.news.map((item, i) => (
-            <div key={i} className="hotspot-popup-headline">
-              <a href={item.link} target="_blank" rel="noopener noreferrer">
+            <div key={i} className="py-2 border-b border-[rgba(255,255,255,0.1)] last:border-b-0">
+              <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-text-primary no-underline text-[0.85rem] block mb-1 transition-colors duration-200 leading-[1.4] hover:text-accent">
                 {item.title}
               </a>
-              <div className="hotspot-popup-source">{item.source} • {formatNewsDate(item.pubDate, locale, t)}</div>
+              <div className="text-xs text-text-secondary">{item.source} • {formatNewsDate(item.pubDate, locale, t)}</div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="hotspot-popup-headlines">
-          <div className="hotspot-popup-headlines-title">{t('map.liveIntel')}</div>
-          <div className="hotspot-popup-no-intel">{t('map.noIntel')}</div>
+        <div className="mt-4 pt-4 border-t border-border-main">
+          <div className="text-xs font-bold text-accent mb-2 uppercase tracking-[1px]">{t('map.liveIntel')}</div>
+          <div className="py-3 text-text-dim text-[0.8rem]">{t('map.noIntel')}</div>
         </div>
       )}
-      <button className="hotspot-popup-close" onClick={onClose}>×</button>
+      <button className="absolute top-2 right-2 bg-transparent border-none text-text-secondary text-2xl cursor-pointer p-0 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-accent hover:text-bg-dark" onClick={onClose}>×</button>
     </div>
   )
 }

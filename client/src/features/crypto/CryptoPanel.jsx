@@ -5,7 +5,6 @@ import { useFeedData } from '@hooks/useFeedData'
 import { RefreshContext } from '@context/RefreshContext'
 import { useI18n } from '@context/I18nContext'
 import { getTimeAgo } from '@utils/dateHelpers'
-import './CryptoPanel.css'
 
 // Mock on-chain data
 const MOCK_CHAIN_DATA = {
@@ -87,38 +86,38 @@ const CryptoPanel = () => {
         }, [refreshKey])
 
     if (loading && news.length === 0) {
-        return <div className="loading-msg">{t('blockchain.loading')}</div>
+        return <div className="p-4 text-center text-text-dim text-[0.8rem]">{t('blockchain.loading')}</div>
     }
 
     return (
-        <div className="blockchain-panel">
-            <div className="chain-stats">
-                <div className="chain-stat">
-                    <span className="chain-stat-label">{t('blockchain.btcHashrate')}</span>
-                    <span className="chain-stat-value">{chainData.btcHashrate}</span>
+        <div className="flex flex-col">
+            <div className="grid grid-cols-4 gap-2 py-2.5 px-3 bg-[rgba(245,158,11,0.05)] border-b border-[rgba(245,158,11,0.1)] max-[768px]:grid-cols-2">
+                <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[0.5rem] text-text-dim uppercase tracking-[0.05em]">{t('blockchain.btcHashrate')}</span>
+                    <span className="text-[0.7rem] font-semibold text-text-primary font-[family-name:var(--font-mono)]">{chainData.btcHashrate}</span>
                 </div>
-                <div className="chain-stat">
-                    <span className="chain-stat-label">{t('blockchain.ethGas')}</span>
-                    <span className="chain-stat-value">{chainData.ethGas}</span>
+                <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[0.5rem] text-text-dim uppercase tracking-[0.05em]">{t('blockchain.ethGas')}</span>
+                    <span className="text-[0.7rem] font-semibold text-text-primary font-[family-name:var(--font-mono)]">{chainData.ethGas}</span>
                 </div>
-                <div className="chain-stat">
-                    <span className="chain-stat-label">{t('blockchain.defiTvl')}</span>
-                    <span className="chain-stat-value green">{chainData.defiTvl}</span>
+                <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[0.5rem] text-text-dim uppercase tracking-[0.05em]">{t('blockchain.defiTvl')}</span>
+                    <span className="text-[0.7rem] font-semibold text-text-primary font-[family-name:var(--font-mono)] !text-[#10b981]">{chainData.defiTvl}</span>
                 </div>
-                <div className="chain-stat">
-                    <span className="chain-stat-label">{t('blockchain.nft24h')}</span>
-                    <span className="chain-stat-value">{chainData.nftVolume}</span>
+                <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[0.5rem] text-text-dim uppercase tracking-[0.05em]">{t('blockchain.nft24h')}</span>
+                    <span className="text-[0.7rem] font-semibold text-text-primary font-[family-name:var(--font-mono)]">{chainData.nftVolume}</span>
                 </div>
             </div>
 
-            <div className="crypto-news">
+            <div className="flex flex-col">
                 {news.map((item, idx) => (
-                    <div key={idx} className="crypto-item">
-                        <div className="crypto-source">{item.source}</div>
-                        <a href={item.link} target="_blank" rel="noopener noreferrer" className="crypto-title">
+                    <div key={idx} className="py-2.5 px-4 border-b border-[rgba(255,255,255,0.04)] transition-all duration-200 hover:bg-[rgba(255,255,255,0.03)] last:border-b-0">
+                        <div className="text-[0.7rem] text-[#f59e0b] font-semibold uppercase tracking-[0.08em] mb-0.5">{item.source}</div>
+                        <a href={item.link} target="_blank" rel="noopener noreferrer" className="block text-[0.85rem] text-text-primary no-underline leading-[1.4] transition-colors duration-200 hover:text-[#f59e0b]">
                             {item.title}
                         </a>
-                        <div className="crypto-time">{getTimeAgo(item.date, locale)}</div>
+                        <div className="text-[0.7rem] text-text-dim mt-1 font-[family-name:var(--font-mono)]">{getTimeAgo(item.date, locale)}</div>
                     </div>
                 ))}
             </div>
