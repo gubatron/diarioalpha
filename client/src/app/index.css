@@ -421,18 +421,18 @@
     }
 
     /* ===== Hotspot severity levels ===== */
-    .hotspot-popup-level.high { background: #ff3333; color: #fff; }
-    .hotspot-popup-level.elevated { background: #ffcc00; color: #000; }
-    .hotspot-popup-level.medium { background: #00ff88; color: #000; }
+    .hotspot-popup-level.high { background: #ef4444; color: #fff; }
+    .hotspot-popup-level.elevated { background: #f59e0b; color: #000; }
+    .hotspot-popup-level.medium { background: #22c55e; color: #000; }
     .hotspot-popup-level.intel { background: #00ddff; color: #000; }
     .hotspot-popup-level.country { background: #888; color: #fff; }
 
     /* ===== Map legend dots ===== */
-    .legend-dot.high { background: #ff3333; box-shadow: 0 0 8px #ff3333; }
-    .legend-dot.elevated { background: #ffcc00; box-shadow: 0 0 8px #ffcc00; }
-    .legend-dot.medium { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
-    .legend-dot.hotspot { background: #ff3333; box-shadow: 0 0 8px #ff3333; }
-    .legend-dot.active { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+    .legend-dot.high { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    .legend-dot.elevated { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+    .legend-dot.medium { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    .legend-dot.hotspot { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    .legend-dot.active { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
     .legend-dot.inactive { background: #888888; box-shadow: 0 0 8px #888888; }
 
     /* ===== Map stat alert colors ===== */

@@ -11,6 +11,22 @@ import { useI18n } from '@context/I18nContext'
 import HotspotModal from './HotspotModal'
 import TickerStrip from '@features/markets/TickerStrip'
 
+// Centralized color palette for map markers based on severity level.
+// Keeps a single source of truth so every marker type stays visually consistent.
+const MARKER_COLORS = {
+  critical: '#ef4444',  // red
+  high:     '#ef4444',  // red
+  elevated: '#f59e0b',  // amber / yellow
+  medium:   '#22c55e',  // green
+  low:      '#22c55e',  // green
+}
+
+/**
+ * Return the marker colour for a given severity string.
+ * Falls back to green when the severity is unknown.
+ */
+const getMarkerColor = (severity) => MARKER_COLORS[severity] || MARKER_COLORS.medium
+
 const GlobalMap = () => {
   const svgRef = useRef(null)
   const containerRef = useRef(null)
@@ -445,6 +461,7 @@ const GlobalMap = () => {
           const [x, y] = projected
 
           const severity = hotspot.severity || hotspot.level
+          const color = getMarkerColor(severity)
           const group = hotspotsGroup.append('g')
             .attr('class', `hotspot ${severity}`)
             .attr('transform', `translate(${x},${y})`)
@@ -475,21 +492,21 @@ const GlobalMap = () => {
           group.append('circle')
             .attr('r', 8)
             .attr('fill', 'none')
-            .attr('stroke', severity === 'high' ? '#ff3333' : severity === 'elevated' ? '#ffcc00' : '#00ff88')
+            .attr('stroke', color)
             .attr('stroke-width', 2)
             .attr('opacity', 0.8)
-            .attr('class', severity === 'high' ? 'hotspot-pulse' : '')
+            .attr('class', severity === 'high' || severity === 'critical' ? 'hotspot-pulse' : '')
 
           // Inner dot
           group.append('circle')
             .attr('r', 3)
-            .attr('fill', severity === 'high' ? '#ff3333' : severity === 'elevated' ? '#ffcc00' : '#00ff88')
+            .attr('fill', color)
 
           // Label
           group.append('text')
             .attr('x', 12)
             .attr('y', 4)
-            .attr('fill', severity === 'high' ? '#ff3333' : severity === 'elevated' ? '#ffcc00' : '#00ff88')
+            .attr('fill', color)
             .attr('font-size', '10px')
             .attr('font-weight', '600')
             .text(hotspot.name)
@@ -550,7 +567,7 @@ const GlobalMap = () => {
             const [x, y] = projected
 
             const intensity = zone.intensity || 'medium'
-            const color = intensity === 'high' ? '#ff3333' : intensity === 'elevated' ? '#ffcc00' : '#ccff00'
+            const color = getMarkerColor(intensity)
 
             const g = conflictGroup.append('g')
               .attr('transform', `translate(${x},${y})`)
@@ -854,19 +871,13 @@ const GlobalMap = () => {
           if (!projected) return
           const [x, y] = projected
 
-          // Determine marker color based on matchCount (stories available)
-          const matchCount = intel.matchCount || 0
-          let markerColor
-          if (matchCount >= 5) {
-            markerColor = '#ef4444' // red - high activity
-          } else if (matchCount >= 2) {
-            markerColor = '#f59e0b' // yellow - moderate activity
-          } else {
-            markerColor = '#00ff88' // green - low/no activity
-          }
+          // Derive colour from the severity that useDynamicRegions already computed
+          // (accounts for matchCount, urgency keywords, and recency).
+          const severity = intel.severity || 'medium'
+          const markerColor = getMarkerColor(severity)
 
           const group = intelGroup.append('g')
-            .attr('class', `intel-hotspot ${matchCount >= 5 ? 'high' : matchCount >= 2 ? 'moderate' : 'low'}`)
+            .attr('class', `intel-hotspot ${severity === 'critical' || severity === 'high' ? 'high' : severity === 'elevated' ? 'moderate' : 'low'}`)
             .attr('transform', `translate(${x},${y})`)
             .style('cursor', 'pointer')
 
@@ -913,15 +924,9 @@ const GlobalMap = () => {
               const newsItems = await MapFeedService.fetchNewsForHotspot(intel)
               const actualCount = newsItems ? newsItems.length : 0
 
-              // Update marker color based on actual fetched count
-              let updatedMarkerColor
-              if (actualCount >= 5) {
-                updatedMarkerColor = '#ef4444' // red - high activity
-              } else if (actualCount >= 2) {
-                updatedMarkerColor = '#f59e0b' // yellow - moderate activity
-              } else {
-                updatedMarkerColor = '#00ff88' // green - low/no activity
-              }
+              // Re-derive severity from the live article count and recolour the marker
+              const liveSeverity = actualCount >= 5 ? 'high' : actualCount >= 2 ? 'elevated' : 'medium'
+              const updatedMarkerColor = getMarkerColor(liveSeverity)
 
               // Update the marker's ring and dot color
               const circles = group.selectAll('circle')
@@ -1050,7 +1055,7 @@ const GlobalMap = () => {
             .attr('stroke', markerColor)
             .attr('stroke-width', 2)
             .attr('opacity', 0.8)
-            .attr('class', matchCount >= 5 ? 'hotspot-pulse' : '')
+            .attr('class', severity === 'high' || severity === 'critical' ? 'hotspot-pulse' : '')
 
           // Inner dot
           group.append('circle')
