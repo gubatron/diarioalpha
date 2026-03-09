@@ -205,10 +205,11 @@ export const useDynamicRegions = (refreshInterval = 10 * 60 * 1000) => {
             matchCount: severityData.matchCount,
             recentMatchCount: severityData.recentMatchCount,
             urgencyScore: severityData.urgencyScore,
-            lastChecked: severityData.timestamp
+            lastChecked: severityData.timestamp,
+            matchedArticles: severityData.matchedArticles
           }
         }
-        return { ...hotspot, severity: 'medium' }
+        return { ...hotspot, severity: 'medium', matchedArticles: [] }
       })
 
       // Update conflict zones with enhanced tracking

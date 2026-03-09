@@ -379,6 +379,21 @@
   box-shadow: 0 0 8px #00ff88;
 }
 
+.legend-dot.hotspot {
+  background: #ff3333;
+  box-shadow: 0 0 8px #ff3333;
+}
+
+.legend-dot.active {
+  background: #00ff88;
+  box-shadow: 0 0 8px #00ff88;
+}
+
+.legend-dot.inactive {
+  background: #888888;
+  box-shadow: 0 0 8px #888888;
+}
+
 @keyframes pulse-ring {
   0% {
     stroke-width: 2px;
@@ -464,4 +479,70 @@
   100% {
     stroke-opacity: 1;
   }
+}
+
+/* Marker hover tooltip - square container matching sidebar style */
+.marker-tooltip {
+  pointer-events: none;
+  z-index: 50;
+}
+
+.marker-tooltip .tooltip-bg {
+  fill: rgba(10, 14, 20, 0.98);
+  stroke: var(--accent);
+  stroke-width: 1;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+}
+
+.marker-tooltip .tooltip-header {
+  font-family: var(--font-main);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.marker-tooltip .tooltip-divider {
+  stroke: rgba(0, 255, 136, 0.3);
+  stroke-width: 1;
+}
+
+.marker-tooltip .tooltip-text {
+  font-family: var(--font-main);
+  font-size: 10px;
+  font-weight: 500;
+  fill: #e2e8f0;
+  line-height: 1.4;
+}
+
+.marker-tooltip .tooltip-text tspan {
+  fill: #e2e8f0;
+}
+
+/* Show More button */
+.marker-tooltip .tooltip-show-more-bg {
+  transition: all 0.2s;
+}
+
+.marker-tooltip .tooltip-show-more-bg:hover {
+  fill: rgba(0, 255, 136, 0.3);
+  stroke: #00ff88;
+  stroke-width: 1.5;
+}
+
+.marker-tooltip .tooltip-show-more-text {
+  font-family: var(--font-main);
+  font-size: 9px;
+  font-weight: 700;
+  fill: #00ff88;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Tooltip spinner */
+.marker-tooltip .tooltip-spinner {
+  pointer-events: none;
+}
+
+.marker-tooltip .spinner-circle {
+  transform-origin: 100px 50px;
 }

@@ -133,7 +133,7 @@ const HotspotModal = ({ selectedHotspot, onClose, newsLoading }) => {
           <div className="hotspot-popup-level unknown">{t('map.location')}</div>
         )}
       </div>
-      
+
       {selectedHotspot.category && (
         <div className="hotspot-popup-category">{selectedHotspot.category}</div>
       )}
@@ -145,7 +145,7 @@ const HotspotModal = ({ selectedHotspot, onClose, newsLoading }) => {
           <strong>{t('map.region')}</strong> {selectedHotspot.region}
         </div>
       )}
-      
+
       {/* ASSETS AT RISK SECTION */}
       {relatedAssets.length > 0 && (
         <div className="hotspot-popup-assets-section">
@@ -167,11 +167,11 @@ const HotspotModal = ({ selectedHotspot, onClose, newsLoading }) => {
       <div className="hotspot-popup-desc">
         {selectedHotspot.description || t('map.situationDefault', { name: selectedHotspot.name })}
       </div>
-      
+
       {selectedHotspot.status && (
         <div className="hotspot-popup-status">{t('map.status', { status: selectedHotspot.status })}</div>
       )}
-      
+
       {/* LIVE INTEL SECTION */}
       {newsLoading ? (
         <div className="hotspot-popup-headlines">
