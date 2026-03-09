@@ -344,14 +344,6 @@
         letter-spacing: 0.5px;
     }
 
-    .marker-tooltip .tooltip-spinner {
-        pointer-events: none;
-    }
-
-    .marker-tooltip .spinner-circle {
-        transform-origin: 100px 50px;
-    }
-
     /* ===== Contribution graph cells ===== */
     .graph-cell {
         stroke: var(--glass-border);

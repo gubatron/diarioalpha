@@ -359,7 +359,7 @@ const GlobalMap = () => {
           )
       }
 
-      // Note: Sphere was rendered earlier for ocean visual. 
+      // Note: Sphere was rendered earlier for ocean visual.
       // Drag is handled by individual elements (sphere, countries, hotspots)
 
       if (mapView === 'us') {
@@ -808,21 +808,6 @@ const GlobalMap = () => {
           .attr('stroke-width', 1)
           .style('display', 'none')
 
-        // Loading spinner group (hidden by default) - centered in content area
-        const spinnerGroup = tooltip.append('g')
-          .attr('class', 'tooltip-spinner')
-          .style('display', 'none')
-
-        spinnerGroup.append('circle')
-          .attr('class', 'spinner-circle')
-          .attr('cx', 100)
-          .attr('cy', 50)
-          .attr('r', 12)
-          .attr('fill', 'none')
-          .attr('stroke', '#00ff88')
-          .attr('stroke-width', 2)
-          .attr('stroke-dasharray', '20 40')
-
         // Article title text - using tspan for wrapping
         const textGroup = tooltip.append('g')
           .attr('class', 'tooltip-text-group')
@@ -833,7 +818,7 @@ const GlobalMap = () => {
           .attr('x', 0)
           .attr('y', 0)
           .attr('fill', '#e2e8f0')
-          .attr('font-size', '10px')
+          .attr('font-size', '11px')
           .attr('font-weight', '500')
           .attr('max-width', '176')
 
@@ -869,13 +854,19 @@ const GlobalMap = () => {
           if (!projected) return
           const [x, y] = projected
 
-          // Determine marker color - all intel markers are green
-          const hasNews = intel.matchCount && intel.matchCount > 0
-          const isHotspot = hasNews && (intel.severity === 'high' || intel.severity === 'critical')
-          let markerColor = '#00ff88' // green for all intel markers
+          // Determine marker color based on matchCount (stories available)
+          const matchCount = intel.matchCount || 0
+          let markerColor
+          if (matchCount >= 5) {
+            markerColor = '#ef4444' // red - high activity
+          } else if (matchCount >= 2) {
+            markerColor = '#f59e0b' // yellow - moderate activity
+          } else {
+            markerColor = '#00ff88' // green - low/no activity
+          }
 
           const group = intelGroup.append('g')
-            .attr('class', `intel-hotspot ${isHotspot ? 'hotspot' : hasNews ? 'active' : 'inactive'}`)
+            .attr('class', `intel-hotspot ${matchCount >= 5 ? 'high' : matchCount >= 2 ? 'moderate' : 'low'}`)
             .attr('transform', `translate(${x},${y})`)
             .style('cursor', 'pointer')
 
@@ -897,17 +888,16 @@ const GlobalMap = () => {
           group.on('mouseenter', async function () {
             // Store current intel for tooltip click
             currentHoveredIntel = intel
-            
+
             // Show loading state immediately with area name
             tooltip.select('.tooltip-header').text(intel.name)
             tooltip.select('.tooltip-divider').style('display', 'none')
-            tooltip.select('.tooltip-spinner').style('display', null)
             tooltip.select('.tooltip-show-more-bg').style('display', 'none')
             tooltip.select('.tooltip-show-more-text').style('display', 'none')
-            
+
             const textElem = tooltip.select('.tooltip-text')
             textElem.text('Fetching news...')
-            
+
             tooltip.select('.tooltip-bg')
               .attr('width', 200)
               .attr('height', 80)
@@ -918,18 +908,32 @@ const GlobalMap = () => {
             tooltip.style('display', null)
             tooltip.style('pointer-events', 'all')
 
-            // Start spinner animation
-            const spinner = tooltip.select('.spinner-circle')
-            let rotation = 0
-            const spinInterval = setInterval(() => {
-              rotation = (rotation + 15) % 360
-              spinner.attr('transform', `rotate(${rotation} 100 50)`)
-            }, 50)
-
             try {
               // Fetch fresh news for this intel hotspot
               const newsItems = await MapFeedService.fetchNewsForHotspot(intel)
-              clearInterval(spinInterval)
+              const actualCount = newsItems ? newsItems.length : 0
+
+              // Update marker color based on actual fetched count
+              let updatedMarkerColor
+              if (actualCount >= 5) {
+                updatedMarkerColor = '#ef4444' // red - high activity
+              } else if (actualCount >= 2) {
+                updatedMarkerColor = '#f59e0b' // yellow - moderate activity
+              } else {
+                updatedMarkerColor = '#00ff88' // green - low/no activity
+              }
+
+              // Update the marker's ring and dot color
+              const circles = group.selectAll('circle')
+              circles.each(function(d, i) {
+                if (i === 0) {
+                  // First circle is the pulsing ring (stroke only)
+                  d3.select(this).attr('stroke', updatedMarkerColor)
+                } else {
+                  // Second circle is the inner dot (fill)
+                  d3.select(this).attr('fill', updatedMarkerColor)
+                }
+              })
 
               const recentArticle = newsItems && newsItems.length > 0
                 ? newsItems[0]
@@ -939,12 +943,15 @@ const GlobalMap = () => {
                 // Show full article title, dynamically size the container
                 const fullTitle = recentArticle.title
                 const textElem = tooltip.select('.tooltip-text')
-                
+
+                // Clear the loading text
+                textElem.text('')
+
                 // Word wrap the text manually using tspan
                 const words = fullTitle.split(' ')
                 const maxWidth = 176
-                const lineHeight = 14
-                const charWidth = 6 // approx width per character for 10px font
+                const lineHeight = 15
+                const charWidth = 6.5 // approx width per character for 11px font
                 let lines = []
                 let currentLine = ''
                 
@@ -994,24 +1001,19 @@ const GlobalMap = () => {
                   .attr('x', 100)
                   .attr('y', buttonY + 15)
                   .style('display', null)
-                  
-                tooltip.select('.tooltip-spinner').style('display', 'none')
               } else {
                 // No news available
                 const textElem = tooltip.select('.tooltip-text')
                 textElem.text('No news for this area')
                 tooltip.select('.tooltip-divider').style('display', null)
                 tooltip.select('.tooltip-bg').attr('height', 60)
-                tooltip.select('.tooltip-spinner').style('display', 'none')
               }
             } catch (e) {
-              clearInterval(spinInterval)
               console.error('Error fetching news for intel hotspot:', e)
               const textElem = tooltip.select('.tooltip-text')
               textElem.text('Error loading news')
               tooltip.select('.tooltip-divider').style('display', null)
               tooltip.select('.tooltip-bg').attr('height', 60)
-              tooltip.select('.tooltip-spinner').style('display', 'none')
             }
           })
 
@@ -1048,7 +1050,7 @@ const GlobalMap = () => {
             .attr('stroke', markerColor)
             .attr('stroke-width', 2)
             .attr('opacity', 0.8)
-            .attr('class', isHotspot ? 'hotspot-pulse' : '')
+            .attr('class', matchCount >= 5 ? 'hotspot-pulse' : '')
 
           // Inner dot
           group.append('circle')
