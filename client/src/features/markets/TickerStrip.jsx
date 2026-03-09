@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
 import { useI18n } from '@context/I18nContext'
-import './TickerStrip.css'
 
 const MARKET_ITEMS = [
     // Market Indices
@@ -152,11 +151,11 @@ const TickerStrip = ({ mode = 'default' }) => {
         return (
             <div
                 key={`${item.symbol}-${idx}`}
-                className={`ticker-item ${data.type} ${isUp ? 'up' : 'down'}`}
+                className={`ticker-item ${data.type} ${isUp ? 'up' : 'down'} flex items-center gap-2.5 shrink-0 py-0.5 transition-opacity duration-200 hover:opacity-70`}
             >
-                <span className="ticker-name">{data.name}</span>
-                <span className="ticker-price">{formatPrice(data.price, data.type)}</span>
-                <span className={`ticker-change ${isUp ? 'up' : 'down'}`}>
+                <span className="ticker-name text-[0.65rem] font-medium text-text-secondary uppercase tracking-[0.08em]">{data.name}</span>
+                <span className="text-[0.7rem] font-medium text-text-primary font-[family-name:var(--font-mono)]">{formatPrice(data.price, data.type)}</span>
+                <span className={`text-[0.65rem] font-semibold font-[family-name:var(--font-mono)] ${isUp ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>
                     {formatChange(data.changePercent)}
                 </span>
             </div>
@@ -165,8 +164,8 @@ const TickerStrip = ({ mode = 'default' }) => {
 
     if (loading) {
         return (
-            <div className="ticker-container ticker-loading">
-                <div className="ticker-loading-text">
+            <div className="w-full bg-ticker-bg border-b border-border-glass shrink-0 relative z-20 flex items-center justify-center p-4">
+                <div className="text-[0.65rem] text-text-dim tracking-[0.1em] uppercase">
                     {t('ticker.loading', { target: mode === 'geo' ? t('ticker.geoAlpha') : t('ticker.market') })}
                 </div>
             </div>
@@ -180,14 +179,14 @@ const TickerStrip = ({ mode = 'default' }) => {
         
         return (
              <div
-                className={`ticker-container geo-mode ${isPaused ? 'paused' : ''}`}
+                className={`w-full bg-ticker-bg border-b border-border-glass shrink-0 relative z-20 py-1 !fixed !bottom-0 !left-0 !right-0 !border-t !border-t-accent !border-b-0 !bg-[linear-gradient(to_bottom,rgba(10,20,15,0.95),rgba(5,10,8,0.98))] !z-50 ${isPaused ? 'paused' : ''}`}
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
                 ref={stripRef}
             >
-                 <div className="ticker-label">{t('ticker.geoAlphaLabel')}</div>
-                <div className="ticker-strip">
-                    <div className="ticker-track">
+                 <div className="absolute left-0 top-0 bottom-0 bg-accent text-black text-[0.7rem] font-extrabold px-3 flex items-center z-10 tracking-[1px] shadow-[5px_0_15px_rgba(0,0,0,0.5)]">{t('ticker.geoAlphaLabel')}</div>
+                <div className="ticker-strip w-full overflow-hidden relative">
+                    <div className="ticker-track flex gap-6 py-1.5 animate-ticker-scroll w-max">
                         {itemsToDisplay.map((item, idx) => {
                              const data = tickerData[item.symbol]
                              return renderTickerItem(item, idx, data)
@@ -205,14 +204,14 @@ const TickerStrip = ({ mode = 'default' }) => {
 
     return (
         <div
-            className={`ticker-container ${isPaused ? 'paused' : ''}`}
+            className={`w-full bg-ticker-bg border-b border-border-glass shrink-0 relative z-20 py-1 ${isPaused ? 'paused' : ''}`}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             ref={stripRef}
         >
             {/* Markets & Sectors Row - scrolls left */}
-            <div className="ticker-strip">
-                <div className="ticker-track">
+            <div className="ticker-strip w-full overflow-hidden relative">
+                <div className="ticker-track flex gap-6 py-1.5 animate-ticker-scroll w-max">
                     {[...marketItems, ...marketItems].map((item, idx) => {
                         const data = tickerData[item.symbol]
                         return renderTickerItem(item, idx, data)
@@ -221,8 +220,8 @@ const TickerStrip = ({ mode = 'default' }) => {
             </div>
 
             {/* Commodities Row - scrolls right */}
-            <div className="ticker-strip commodity-strip">
-                <div className="ticker-track reverse">
+            <div className="ticker-strip w-full overflow-hidden relative border-t border-t-[rgba(255,255,255,0.03)]">
+                <div className="ticker-track flex gap-6 py-1.5 !animate-ticker-scroll-reverse w-max">
                     {[...commodityItems, ...commodityItems].map((item, idx) => {
                         const data = tickerData[item.symbol]
                         return renderTickerItem(item, idx, data)
@@ -231,8 +230,8 @@ const TickerStrip = ({ mode = 'default' }) => {
             </div>
 
             {/* Crypto Row - scrolls left */}
-            <div className="ticker-strip crypto-strip">
-                <div className="ticker-track">
+            <div className="ticker-strip w-full overflow-hidden relative border-t border-t-[rgba(245,158,11,0.05)]">
+                <div className="ticker-track flex gap-6 py-1.5 animate-ticker-scroll w-max">
                     {[...cryptoItems, ...cryptoItems].map((item, idx) => {
                         const data = tickerData[item.symbol]
                         return renderTickerItem(item, idx, data)

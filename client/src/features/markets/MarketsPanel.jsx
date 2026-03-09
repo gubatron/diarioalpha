@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '@context/I18nContext'
 import { formatNumber, formatPercent } from '@utils'
-import './MarketsPanel.css'
 
 const MARKETS = [
   { symbol: 'SPY', name: 'S&P 500' },
@@ -56,11 +55,11 @@ const MarketsPanel = () => {
   }
 
   if (loading) {
-    return <div className="loading-msg">{t('marketsPanel.loading')}</div>
+    return <div className="p-4 text-center text-text-dim text-[0.8rem]">{t('marketsPanel.loading')}</div>
   }
 
   return (
-    <div className="markets-panel">
+    <div className="flex flex-col gap-2">
       {MARKETS.map(market => {
         const data = markets[market.symbol]
         if (!data) return null
@@ -68,14 +67,14 @@ const MarketsPanel = () => {
         const isUp = data.change >= 0
 
         return (
-          <div key={market.symbol} className="market-item">
+          <div key={market.symbol} className="p-3 bg-bg-dark flex justify-between items-center border border-transparent transition-all duration-200 hover:border-accent">
             <div>
-              <div className="market-name">{market.name}</div>
-              <div className="market-symbol">{market.symbol}</div>
+              <div className="text-sm text-text-primary font-semibold">{market.name}</div>
+              <div className="text-xs text-text-secondary">{market.symbol}</div>
             </div>
-            <div className="market-data">
-              <div className="market-price">${formatNumber(data.price)}</div>
-              <div className={`market-change ${isUp ? 'up' : 'down'}`}>
+            <div className="text-right">
+              <div className="text-base font-bold text-text-primary">${formatNumber(data.price)}</div>
+              <div className={`text-sm font-semibold ${isUp ? 'text-white' : 'text-[var(--alert)]'}`}>
                 {formatPercent(data.changePercent)}
               </div>
             </div>

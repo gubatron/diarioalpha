@@ -3,7 +3,6 @@ import { BaseFeedService } from './baseFeedService'
 import { RefreshContext } from '@context/RefreshContext'
 import { useI18n } from '@context/I18nContext'
 import { getTimeAgo } from '@utils/dateHelpers'
-import './NewsPanel.css'
 
 const NewsPanel = ({ feeds, panelId }) => {
   const [news, setNews] = useState([])
@@ -58,38 +57,38 @@ const NewsPanel = ({ feeds, panelId }) => {
   }
 
   if (loading && news.length === 0) {
-    return <div className="loading-msg">{t('news.loading')}</div>
+    return <div className="p-4 text-center text-text-dim text-[0.8rem]">{t('news.loading')}</div>
   }
 
   if (error && news.length === 0) {
-    return <div className="error-msg">{error}</div>
+    return <div className="p-8 text-center text-status-red text-[0.7rem]">{error}</div>
   }
 
   return (
-    <div className={`news-panel ${getThemeClass()}`}>
-      <div className="news-summary">
-        <div className="summary-stat">
-          <span className="stat-value">{news.length}</span>
-          <span className="stat-label">{t('news.articles')}</span>
+    <div className={`${getThemeClass()} flex flex-col`}>
+      <div className="news-summary flex gap-5 py-2.5 px-4 border-b border-[rgba(255,255,255,0.06)] items-center">
+        <div className="flex items-center gap-1.5">
+          <span className="stat-value text-[0.9rem] font-bold text-text-primary font-[family-name:var(--font-mono)]">{news.length}</span>
+          <span className="text-[0.5rem] text-text-dim uppercase tracking-[0.1em]">{t('news.articles')}</span>
         </div>
-        <div className="summary-stat">
-          <span className="stat-value">{uniqueSources}</span>
-          <span className="stat-label">{t('news.sources')}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="stat-value text-[0.9rem] font-bold text-text-primary font-[family-name:var(--font-mono)]">{uniqueSources}</span>
+          <span className="text-[0.5rem] text-text-dim uppercase tracking-[0.1em]">{t('news.sources')}</span>
         </div>
-        <div className="summary-stat live-indicator">
-          <span className="pulse-dot"></span>
-          <span className="stat-label">{t('common.live')}</span>
+        <div className="flex items-center ml-auto gap-1">
+          <span className="w-[5px] h-[5px] rounded-full bg-[#10b981] animate-live-pulse shadow-[0_0_6px_rgba(16,185,129,0.5)]"></span>
+          <span className="text-[0.5rem] text-text-dim uppercase tracking-[0.1em]">{t('common.live')}</span>
         </div>
       </div>
 
-      <div className="news-list">
+      <div className="flex flex-col">
         {news.map((item, idx) => (
-          <div key={idx} className="item">
-            <div className="item-source">{item.source}</div>
-            <a href={item.link} target="_blank" rel="noopener noreferrer" className="item-title">
+          <div key={idx} className="news-item py-2.5 px-4 bg-transparent border-l-2 border-l-transparent border-b border-b-[rgba(255,255,255,0.04)] transition-all duration-200 cursor-pointer relative last:border-b-0 hover:bg-[rgba(255,255,255,0.04)] hover:border-l-current hover:translate-x-0.5">
+            <div className="item-source text-[0.7rem] font-semibold uppercase tracking-[0.08em] mb-0.5">{item.source}</div>
+            <a href={item.link} target="_blank" rel="noopener noreferrer" className="block text-text-primary text-[0.85rem] leading-[1.45] no-underline font-normal transition-colors duration-200 hover:text-[#818cf8]">
               {item.title}
             </a>
-            <div className="item-time">{getTimeAgo(item.date, locale)}</div>
+            <div className="text-[0.7rem] text-text-dim mt-1 font-[family-name:var(--font-mono)]">{getTimeAgo(item.date, locale)}</div>
           </div>
         ))}
       </div>

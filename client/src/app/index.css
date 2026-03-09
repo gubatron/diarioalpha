@@ -147,6 +147,9 @@
 }
 
 @layer components {
+    /* ===== Ticker pause control ===== */
+    .paused .ticker-track { animation-play-state: paused; }
+
     /* ===== Panel staggered animation delays ===== */
     .panel:nth-child(1) { animation-delay: 0.05s; }
     .panel:nth-child(2) { animation-delay: 0.10s; }
