@@ -387,6 +387,16 @@
 
     .theme-neutral .news-summary { background: rgba(255, 255, 255, 0.03); }
 
+    /* ===== AI player chip color dot ===== */
+    .ai-player-chip::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--chip-color);
+        box-shadow: 0 0 5px var(--chip-color);
+    }
+
     /* ===== Ticker type accents ===== */
     .ticker-item.index .ticker-name { color: #818cf8; }
     .ticker-item.crypto .ticker-name { color: #fbbf24; }
