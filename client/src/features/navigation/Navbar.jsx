@@ -18,9 +18,9 @@ const Navbar = ({ onRefresh, isRefreshing, onOpenSettings, onOpenCommand, curren
     }, [])
 
     return (
-        <nav className="bg-nav-bg backdrop-blur-[12px] border-b border-border-glass py-3 px-6 flex justify-between items-center sticky top-0 z-[100] shadow-[0_4px_20px_rgba(0,0,0,0.3)] animate-navbar-slide max-[768px]:py-2.5 max-[768px]:px-4 max-[768px]:flex-wrap max-[768px]:gap-2">
+        <nav className="site-navbar bg-nav-bg backdrop-blur-[12px] border-b border-border-glass py-3 px-6 flex justify-between items-center sticky top-0 z-[100] shadow-[0_4px_20px_rgba(0,0,0,0.3)] animate-navbar-slide max-[768px]:py-2.5 max-[768px]:px-4 max-[768px]:flex-wrap max-[768px]:gap-2">
             <div className="flex items-center gap-5 max-[768px]:gap-3">
-                <h1 className="text-base font-bold tracking-[0.1em] text-text-primary font-[family-name:var(--font-display)] max-[768px]:text-[0.8rem]">{t('app.title')}</h1>
+                <h1 className="site-title text-base font-bold tracking-[0.1em] text-text-primary font-[family-name:var(--font-display)] max-[768px]:text-[0.8rem]">{t('app.title')}</h1>
                 <div className="flex items-center">
                     <span className={`flex items-center gap-1.5 py-[0.3rem] px-2.5 bg-[rgba(16,185,129,0.1)] text-[#10b981] rounded border border-[rgba(16,185,129,0.2)] text-[0.65rem] font-semibold tracking-[0.1em] ${isRefreshing ? '!bg-[rgba(245,158,11,0.15)] !text-[#f59e0b] !border-[rgba(245,158,11,0.25)] animate-pulse-slow' : ''}`}>
                         {!isRefreshing && <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-live-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>}

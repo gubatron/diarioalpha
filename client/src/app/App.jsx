@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from '@features/navigation/Navbar'
 import Dashboard from '@features/dashboard/Dashboard'
@@ -7,7 +7,7 @@ import SettingsModal from '@features/navigation/SettingsModal'
 import CommandModal from '@features/navigation/CommandModal'
 import { usePanelSettings } from '@hooks/usePanelSettings'
 import { ThemeProvider } from '@context/ThemeContext'
-import { I18nProvider } from '@context/I18nContext'
+import { I18nProvider, useI18n } from '@context/I18nContext'
 import { RefreshProvider, RefreshContext } from '@context/RefreshContext'
 
 function AppContent() {
@@ -17,6 +17,11 @@ function AppContent() {
   const [currentMode, setCurrentMode] = useState(null) // null = show all panels
   const { panelSettings } = usePanelSettings()
   const { triggerRefresh } = useContext(RefreshContext)
+  const { t } = useI18n()
+
+  useEffect(() => {
+    document.title = t('app.title')
+  }, [t])
 
   const handleRefresh = () => {
     setIsRefreshing(true)
@@ -25,7 +30,7 @@ function AppContent() {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="app-shell flex flex-col h-screen overflow-hidden">
       <Navbar
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}
